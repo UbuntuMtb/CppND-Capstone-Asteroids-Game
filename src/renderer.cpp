@@ -38,7 +38,7 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-void Renderer::Render(Snake const snake, SDL_Point const &food) {
+void Renderer::Render(Snake const &snake, SDL_Point const &food, std::vector<std::unique_ptr<Object>> &objects) {
   SDL_Rect block;
   block.w = screen_width / grid_width;
   block.h = screen_height / grid_height;
@@ -70,6 +70,18 @@ void Renderer::Render(Snake const snake, SDL_Point const &food) {
     SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x00, 0x00, 0xFF);
   }
   SDL_RenderFillRect(sdl_renderer, &block);
+
+  // Render asteroid objects
+  for (auto &pObject: objects) {
+    SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    const std::vector<SDL_Point> &points = pObject->getTranslatedPointsI();
+
+    for (int i = 0; i < points.size(); i++) {
+      const SDL_Point &pt0 = points[i];
+      const SDL_Point &pt1 = points[(i + 1) % points.size()];
+      SDL_RenderDrawLine(sdl_renderer, pt0.x, pt0.y, pt1.x, pt1.y);
+    }
+  }
 
   // Update Screen
   SDL_RenderPresent(sdl_renderer);

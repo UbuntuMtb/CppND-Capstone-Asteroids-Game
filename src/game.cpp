@@ -2,12 +2,31 @@
 #include <iostream>
 #include "SDL.h"
 
-Game::Game(std::size_t grid_width, std::size_t grid_height)
+Game::Game(std::size_t grid_width, std::size_t grid_height, float maxSpeed)
     : snake(grid_width, grid_height),
       engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
-      random_h(0, static_cast<int>(grid_height - 1)) {
+      random_h(0, static_cast<int>(grid_height - 1)),
+      maxSpeed(maxSpeed) {
   PlaceFood();
+
+  objects.emplace_back(new Asteroid({500, 320}, 50.0, -3 * M_PI / 4, maxSpeed));
+  objects.emplace_back(new Asteroid({500, 320}, 50.0, -3 * M_PI / 4, maxSpeed));
+  objects.emplace_back(new Asteroid({300, 200}, 60.0, M_PI / 4, maxSpeed));
+  objects.emplace_back(new Asteroid({200, 400}, 60.0, M_PI / 2, maxSpeed));
+
+  pShip = new Ship({300, 300}, 0.0, -M_PI / 2, maxSpeed);
+  objects.emplace_back(pShip);
+
+//  asteroids.emplace_back(SDL_FPoint{500, 320}, 50.0, -3 * M_PI / 4, maxSpeed);
+//  asteroids.emplace_back(SDL_FPoint{300, 200}, 60.0, M_PI / 4, maxSpeed);
+//  asteroids.emplace_back(SDL_FPoint{200, 200}, 60.0, 0, maxSpeed);
+//  asteroids.emplace_back(SDL_FPoint{200, 400}, 60.0, M_PI / 2, maxSpeed);
+//  ship = Ship({300, 300}, 0.0, -M_PI / 2, maxSpeed);
+
+//  for (Asteroid &asteroid: asteroids)
+//    objects.push_back(&asteroid);
+//  objects.push_back(&ship);
 }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
@@ -18,14 +37,16 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   Uint32 frame_duration;
   int frame_count = 0;
   bool running = true;
+  float secs_per_frame = (float) target_frame_duration / 1000.0F;
+  bool fire = false;
 
   while (running) {
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(running, snake);
-    Update();
-    renderer.Render(snake, food);
+    controller.HandleInput(running, *pShip, fire);
+    Update(secs_per_frame, fire);
+    renderer.Render(snake, food, objects);
 
     frame_end = SDL_GetTicks();
 
@@ -65,7 +86,7 @@ void Game::PlaceFood() {
   }
 }
 
-void Game::Update() {
+void Game::Update(float secs_per_frame, bool &fire) {
   if (!snake.alive) return;
 
   snake.Update();
@@ -80,6 +101,23 @@ void Game::Update() {
     // Grow snake and increase speed.
     snake.GrowBody();
     snake.speed += 0.02;
+  }
+
+  for (auto &pObject: objects) {
+    if (!pObject->isVisible())
+      pObject->wrapAround();
+
+    auto *pAsteroid = dynamic_cast<Asteroid*>(pObject.get());
+    if (pAsteroid != nullptr)
+      pObject->rotate(-M_PI / 72);
+
+    pObject->move(secs_per_frame);
+  }
+
+  if (fire) {
+    auto *bullet = new Bullet(pShip->getPosition(), maxSpeed, pShip->getDirection(), maxSpeed);
+    objects.emplace_back(bullet);
+
   }
 }
 
