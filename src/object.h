@@ -29,42 +29,49 @@ private:
 
 class Object {
 public:
-  Object(SDL_FPoint position, float rotationAngle, float speed, float direction, float maxSpeed);
+  Object(SDL_FPoint position, float rotationAngle, float speed, float directionAngle, float maxSpeed);
+
   static void setScreenDimensions(float width, float height);
-  void setSpeed(float newSpeed);
-  void setDirection(float direction);
   void addPoints(std::vector<SDL_FPoint> &pts);
+
+  void setRotationAngle(float newRotationAngle);
+  void setSpeed(float newSpeed);
+  void setDirectionAngle(float direction);
+
+  SDL_FPoint getPosition() const { return position; }
+  float getRotationAngle() const { return rotationAngle; }
+  float getSpeed() const { return speed; }
+  float getDirectionAngle() const { return directionAngle; }
+  const std::vector<SDL_FPoint> &getRotatedPoints() const { return rotatedPts; }
+  const std::vector<SDL_FPoint> &getTranslatedPoints() const { return translatedPts; }
+  const std::vector<SDL_Point> &getTranslatedPointsI() const { return translatedPtsI; }
+
   bool isInside(SDL_FPoint point);
-  void rotate(float angle);
+  bool isVisible();
+
+  void rotatePoints();
   void translatePoints();
   void move (float timeDelta);
-  bool isVisible();
   void wrapAround();
   virtual std::string toString();
 
-  const std::vector<SDL_FPoint> &getTranslatedPoints() const { return translatedPts; }
-  const std::vector<SDL_Point> &getTranslatedPointsI() const { return translatedPtsI; }
-  SDL_FPoint getPosition() const { return position; }
-  float getSpeed() const { return speed; }
-  float getDirection() const { return direction; }
-
 private:
+  static float screenWidth;
+  static float screenHeight;
+
+  SDL_FPoint position;
+  float rotationAngle;
+  float speed{0};
+  float directionAngle{0};
+  float maxSpeed;
+  float xSpeed{0};
+  float ySpeed{0};
+
   std::vector<SDL_FPoint> points;
   std::vector<SDL_FPoint> rotatedPts;
   std::vector<SDL_FPoint> translatedPts;
   std::vector<SDL_Point> translatedPtsI;
-  SDL_FPoint position;
-  float rotationAngle;
-  float speed{0};
-  float direction{0};
-  float xSpeed{0};
-  float ySpeed{0};
-  float maxSpeed;
-
-  static float screenWidth;
-  static float screenHeight;
 };
-
 
 #endif //OBJECT_H
 

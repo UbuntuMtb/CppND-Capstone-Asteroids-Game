@@ -69,19 +69,37 @@ bool Line::intersect(const Line& line) const
   return false;
 }
 
-Object::Object(SDL_FPoint position, float rotationAngle, float speed, float direction, float maxSpeed)
+Object::Object(SDL_FPoint position, float rotationAngle, float speed, float directionAngle, float maxSpeed)
   : position(position), rotationAngle(rotationAngle), maxSpeed(maxSpeed)
 {
   if (maxSpeed < 0.0)
     throw std::range_error("Negative max speed!");
   setSpeed(speed);
-  setDirection(direction);
+  setDirectionAngle(directionAngle);
 }
 
 void Object::setScreenDimensions(float width, float height)
 {
   screenWidth = width;
   screenHeight = height;
+}
+
+void Object::addPoints(std::vector<SDL_FPoint> &pts)
+{
+  points = pts;
+  rotatePoints();
+  translatePoints();
+}
+
+//
+// Based on: https://www.geeksforgeeks.org/2d-transformation-rotation-objects/
+//
+void Object::setRotationAngle(float newRotationAngle) {
+  if (newRotationAngle == rotationAngle)
+    return;
+
+  rotationAngle = newRotationAngle;
+  rotatePoints();
 }
 
 void Object::setSpeed(float newSpeed)
@@ -96,30 +114,23 @@ void Object::setSpeed(float newSpeed)
   else
     speed = newSpeed;
 
-  xSpeed = speed * cos(direction);
-  ySpeed = speed * sin(direction);
+  xSpeed = speed * cos(directionAngle);
+  ySpeed = speed * sin(directionAngle);
 }
 
-void Object::setDirection(float newDirection)
+void Object::setDirectionAngle(float newDirectionAngle)
 {
-  if (newDirection == direction)
+  if (newDirectionAngle == directionAngle)
     return;
 
   float TWO_PI = 2 * M_PI;
-  if (newDirection > TWO_PI || newDirection < -TWO_PI)
-    direction = fmod(newDirection, TWO_PI);
+  if (newDirectionAngle > TWO_PI || newDirectionAngle < -TWO_PI)
+    directionAngle = fmod(newDirectionAngle, TWO_PI);
   else
-    direction = newDirection;
+    directionAngle = newDirectionAngle;
 
-  xSpeed = speed * cos(direction);
-  ySpeed = speed * sin(direction);
-}
-
-void Object::addPoints(std::vector<SDL_FPoint> &pts)
-{
-  points = pts;
-  rotate(0.0);
-  move(0.0);
+  xSpeed = speed * cos(directionAngle);
+  ySpeed = speed * sin(directionAngle);
 }
 
 //
@@ -148,12 +159,16 @@ bool Object::isInside(SDL_FPoint point)
   return count & 1;
 }
 
-//
-// Based on: https://www.geeksforgeeks.org/2d-transformation-rotation-objects/
-//
-void Object::rotate(float angle)
+bool Object::isVisible() {
+  for (const SDL_FPoint &point: translatedPts) {
+    if (0 <= point.x && point.x < screenWidth && 0 < point.y && point.y < screenHeight)
+      return true;
+  }
+  return false;
+}
+
+void Object::rotatePoints()
 {
-  rotationAngle += angle;
   float cosA = cos(rotationAngle);
   float sinA = sin(rotationAngle);
   rotatedPts.clear();
@@ -180,14 +195,6 @@ void Object::move(float timeDelta)
 {
   position = {position.x + xSpeed * timeDelta, position.y + ySpeed * timeDelta};
   translatePoints();
-}
-
-bool Object::isVisible() {
-  for (const SDL_FPoint &point: translatedPts) {
-    if (0 <= point.x && point.x < screenWidth && 0 < point.y && point.y < screenHeight)
-      return true;
-  }
-  return false;
 }
 
 void Object::wrapAround() {
@@ -241,5 +248,7 @@ void Object::wrapAround() {
 }
 
 std::string Object::toString() {
-  return "Object";
+  return "[" + std::to_string(position.x) + ", " + std::to_string(position.y) + "], " +
+    "rotation: " + std::to_string(rotationAngle) + ", speed: " + std::to_string(speed) + "], " +
+    "direction: " + std::to_string(directionAngle);
 }

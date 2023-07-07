@@ -109,15 +109,14 @@ void Game::Update(float secs_per_frame, bool &fire) {
 
     auto *pAsteroid = dynamic_cast<Asteroid*>(pObject.get());
     if (pAsteroid != nullptr)
-      pObject->rotate(-M_PI / 72);
+      pObject->setRotationAngle(pObject->getRotationAngle() - (float) M_PI / 72);
 
     pObject->move(secs_per_frame);
   }
 
   if (fire) {
-    auto *bullet = new Bullet(pShip->getPosition(), maxSpeed, pShip->getDirection(), maxSpeed);
+    auto *bullet = new Bullet(pShip->getPosition(), maxSpeed, pShip->getRotationAngle(), maxSpeed);
     objects.emplace_back(bullet);
-
   }
 }
 

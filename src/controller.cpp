@@ -15,6 +15,7 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
     } else if (e.type == SDL_KEYDOWN) {
       switch (e.key.keysym.sym) {
         case SDLK_UP:
+          ship.setDirectionAngle(ship.getRotationAngle());
           ship.setSpeed(ship.getSpeed() + 3);
           break;
 
@@ -22,13 +23,11 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
           break;
 
         case SDLK_LEFT:
-          ship.setDirection(ship.getDirection() - (float) M_PI / 50);
-          ship.rotate(-M_PI / 50);
+          ship.setRotationAngle(ship.getRotationAngle() - (float) M_PI / 70);
           break;
 
         case SDLK_RIGHT:
-          ship.setDirection(ship.getDirection() + (float) M_PI / 50);
-          ship.rotate(M_PI / 50);
+          ship.setRotationAngle(ship.getRotationAngle() + (float) M_PI / 70);
           break;
 
         case SDLK_SPACE:
@@ -38,5 +37,5 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
     }
   }
   if (!keyPressed)
-    ship.setSpeed(ship.getSpeed() - 5);
+    ship.setSpeed(ship.getSpeed() - 3);
 }
