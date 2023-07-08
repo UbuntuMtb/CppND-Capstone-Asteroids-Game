@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include "SDL.h"
+#include "fastSineCosine.h"
 
 enum PointsOrientation { poCollinear = 0, poCCW, poCW};
 
@@ -29,19 +30,19 @@ private:
 
 class Object {
 public:
-  Object(SDL_FPoint position, float rotationAngle, float speed, float directionAngle, float maxSpeed);
+  Object(SDL_FPoint position, int rotationAngle, float speed, int directionAngle, float maxSpeed);
 
   static void setScreenDimensions(float width, float height);
   void addPoints(std::vector<SDL_FPoint> &pts);
 
-  void setRotationAngle(float newRotationAngle);
+  void setRotationAngle(int newRotationAngle);
   void setSpeed(float newSpeed);
-  void setDirectionAngle(float direction);
+  void setDirectionAngle(int directionAngle);
 
   SDL_FPoint getPosition() const { return position; }
-  float getRotationAngle() const { return rotationAngle; }
+  int getRotationAngle() const { return rotationAngle; }
   float getSpeed() const { return speed; }
-  float getDirectionAngle() const { return directionAngle; }
+  int getDirectionAngle() const { return directionAngle; }
   const std::vector<SDL_FPoint> &getRotatedPoints() const { return rotatedPts; }
   const std::vector<SDL_FPoint> &getTranslatedPoints() const { return translatedPts; }
   const std::vector<SDL_Point> &getTranslatedPointsI() const { return translatedPtsI; }
@@ -53,16 +54,19 @@ public:
   void translatePoints();
   void move (float timeDelta);
   void wrapAround();
+  static int wrapAngle(int angle);
   virtual std::string toString();
 
 private:
   static float screenWidth;
   static float screenHeight;
+  static Sine sine;
+  static Cosine cosine;
 
   SDL_FPoint position;
-  float rotationAngle;
+  int rotationAngle{0};
   float speed{0};
-  float directionAngle{0};
+  int directionAngle{0};
   float maxSpeed;
   float xSpeed{0};
   float ySpeed{0};

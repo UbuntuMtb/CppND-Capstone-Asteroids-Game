@@ -3,11 +3,12 @@
 //
 
 #include "object.h"
-#include <cmath>
 #include <stdexcept>
 
 float Object::screenWidth = 0;
 float Object::screenHeight = 0;
+Sine Object::sine;
+Cosine Object::cosine;
 
 bool operator==(const SDL_FPoint& p0, const SDL_FPoint& p1)
 {
@@ -69,11 +70,12 @@ bool Line::intersect(const Line& line) const
   return false;
 }
 
-Object::Object(SDL_FPoint position, float rotationAngle, float speed, float directionAngle, float maxSpeed)
-  : position(position), rotationAngle(rotationAngle), maxSpeed(maxSpeed)
+Object::Object(SDL_FPoint position, int rotationAngle, float speed, int directionAngle, float maxSpeed)
+  : position(position), maxSpeed(maxSpeed)
 {
   if (maxSpeed < 0.0)
     throw std::range_error("Negative max speed!");
+  setRotationAngle(rotationAngle);
   setSpeed(speed);
   setDirectionAngle(directionAngle);
 }
@@ -94,11 +96,10 @@ void Object::addPoints(std::vector<SDL_FPoint> &pts)
 //
 // Based on: https://www.geeksforgeeks.org/2d-transformation-rotation-objects/
 //
-void Object::setRotationAngle(float newRotationAngle) {
+void Object::setRotationAngle(int newRotationAngle) {
   if (newRotationAngle == rotationAngle)
     return;
-
-  rotationAngle = newRotationAngle;
+  rotationAngle = wrapAngle(newRotationAngle);
   rotatePoints();
 }
 
@@ -114,23 +115,17 @@ void Object::setSpeed(float newSpeed)
   else
     speed = newSpeed;
 
-  xSpeed = speed * cos(directionAngle);
-  ySpeed = speed * sin(directionAngle);
+  xSpeed = speed * Object::cosine(directionAngle);
+  ySpeed = speed * Object::sine(directionAngle);
 }
 
-void Object::setDirectionAngle(float newDirectionAngle)
+void Object::setDirectionAngle(int newDirectionAngle)
 {
   if (newDirectionAngle == directionAngle)
     return;
-
-  float TWO_PI = 2 * M_PI;
-  if (newDirectionAngle > TWO_PI || newDirectionAngle < -TWO_PI)
-    directionAngle = fmod(newDirectionAngle, TWO_PI);
-  else
-    directionAngle = newDirectionAngle;
-
-  xSpeed = speed * cos(directionAngle);
-  ySpeed = speed * sin(directionAngle);
+  directionAngle = wrapAngle(newDirectionAngle);
+  xSpeed = speed * Object::cosine(directionAngle);
+  ySpeed = speed * Object::sine(directionAngle);
 }
 
 //
@@ -169,8 +164,8 @@ bool Object::isVisible() {
 
 void Object::rotatePoints()
 {
-  float cosA = cos(rotationAngle);
-  float sinA = sin(rotationAngle);
+  float cosA = cosine(rotationAngle);
+  float sinA = sine(rotationAngle);
   rotatedPts.clear();
 
   for (const SDL_FPoint &pt: points) {
@@ -251,4 +246,11 @@ std::string Object::toString() {
   return "[" + std::to_string(position.x) + ", " + std::to_string(position.y) + "], " +
     "rotation: " + std::to_string(rotationAngle) + ", speed: " + std::to_string(speed) + "], " +
     "direction: " + std::to_string(directionAngle);
+}
+
+int Object::wrapAngle(int angle) {
+  if (angle >= 360 || angle <= -360)
+    return angle % 360;
+  else
+    return angle;
 }

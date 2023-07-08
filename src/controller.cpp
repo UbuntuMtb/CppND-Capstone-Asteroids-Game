@@ -1,7 +1,6 @@
 #include "controller.h"
 #include <iostream>
 #include "SDL.h"
-#include "snake.h"
 
 void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
   SDL_Event e;
@@ -23,11 +22,11 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
           break;
 
         case SDLK_LEFT:
-          ship.setRotationAngle(ship.getRotationAngle() - (float) M_PI / 70);
+          ship.setRotationAngle(ship.getRotationAngle() - 5);
           break;
 
         case SDLK_RIGHT:
-          ship.setRotationAngle(ship.getRotationAngle() + (float) M_PI / 70);
+          ship.setRotationAngle(ship.getRotationAngle() + 5);
           break;
 
         case SDLK_SPACE:

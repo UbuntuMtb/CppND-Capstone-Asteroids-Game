@@ -4,7 +4,7 @@
 
 #include "asteroid.h"
 
-Asteroid::Asteroid(SDL_FPoint position, float speed, float directionAngle, float maxSpeed)
+Asteroid::Asteroid(SDL_FPoint position, float speed, int directionAngle, float maxSpeed)
   : Object(position, 0, speed, directionAngle, maxSpeed)
 {
   std::vector<SDL_FPoint> points = {{20, 20}, {20, -20}, {-20, -20}, {-20, 20}};
@@ -16,8 +16,8 @@ std::string Asteroid::toString()
   return "Asteroid, " + Object::toString();
 }
 
-Ship::Ship(SDL_FPoint position, float speed, float directionAngle, float maxSpeed)
-  : Object(position, -M_PI / 2, speed, directionAngle, maxSpeed)
+Ship::Ship(SDL_FPoint position, float speed, int directionAngle, float maxSpeed)
+  : Object(position, -90, speed, directionAngle, maxSpeed)
 {
   std::vector<SDL_FPoint> points = {{15, 0}, {-15, 10}, {-15, -10}};
   addPoints(points);
@@ -28,7 +28,7 @@ std::string Ship::toString()
   return "Ship, " + Object::toString();
 }
 
-Bullet::Bullet(SDL_FPoint position, float speed, float directionAngle, float maxSpeed)
+Bullet::Bullet(SDL_FPoint position, float speed, int directionAngle, float maxSpeed)
   : Object (position, 0, speed, directionAngle, maxSpeed) {
   std::vector<SDL_FPoint> points = {{2, 2}, {-2, 2}, {-2, -2}, {2, -2}};
   addPoints(points);

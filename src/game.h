@@ -6,7 +6,6 @@
 #include "SDL.h"
 #include "controller.h"
 #include "renderer.h"
-#include "snake.h"
 #include "asteroid.h"
 
 class Game {
@@ -15,10 +14,8 @@ class Game {
   void Run(Controller const &controller, Renderer &renderer,
            std::size_t target_frame_duration);
   int GetScore() const;
-  int GetSize() const;
 
  private:
-  Snake snake;
   SDL_Point food{0, 0};
 
   std::random_device dev;

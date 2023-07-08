@@ -3,19 +3,18 @@
 #include "SDL.h"
 
 Game::Game(std::size_t grid_width, std::size_t grid_height, float maxSpeed)
-    : snake(grid_width, grid_height),
-      engine(dev()),
+    : engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)),
       maxSpeed(maxSpeed) {
   PlaceFood();
 
-  objects.emplace_back(new Asteroid({500, 320}, 50.0, -3 * M_PI / 4, maxSpeed));
-  objects.emplace_back(new Asteroid({500, 320}, 50.0, -3 * M_PI / 4, maxSpeed));
-  objects.emplace_back(new Asteroid({300, 200}, 60.0, M_PI / 4, maxSpeed));
-  objects.emplace_back(new Asteroid({200, 400}, 60.0, M_PI / 2, maxSpeed));
+  objects.emplace_back(new Asteroid({500, 220}, 50.0, -135, maxSpeed));
+  objects.emplace_back(new Asteroid({500, 320}, 50.0, -135, maxSpeed));
+  objects.emplace_back(new Asteroid({300, 200}, 60.0, 45, maxSpeed));
+  objects.emplace_back(new Asteroid({200, 400}, 60.0, 180, maxSpeed));
 
-  pShip = new Ship({300, 300}, 0.0, -M_PI / 2, maxSpeed);
+  pShip = new Ship({300, 300}, 0.0, 0, maxSpeed);
   objects.emplace_back(pShip);
 
 //  asteroids.emplace_back(SDL_FPoint{500, 320}, 50.0, -3 * M_PI / 4, maxSpeed);
@@ -46,7 +45,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     // Input, Update, Render - the main game loop.
     controller.HandleInput(running, *pShip, fire);
     Update(secs_per_frame, fire);
-    renderer.Render(snake, food, objects);
+    renderer.Render(food, objects);
 
     frame_end = SDL_GetTicks();
 
@@ -72,7 +71,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 }
 
 void Game::PlaceFood() {
-  int x, y;
+/*  int x, y;
   while (true) {
     x = random_w(engine);
     y = random_h(engine);
@@ -83,25 +82,10 @@ void Game::PlaceFood() {
       food.y = y;
       return;
     }
-  }
+  }*/
 }
 
 void Game::Update(float secs_per_frame, bool &fire) {
-  if (!snake.alive) return;
-
-  snake.Update();
-
-  int new_x = static_cast<int>(snake.head_x);
-  int new_y = static_cast<int>(snake.head_y);
-
-  // Check if there's food over here
-  if (food.x == new_x && food.y == new_y) {
-    score++;
-    PlaceFood();
-    // Grow snake and increase speed.
-    snake.GrowBody();
-    snake.speed += 0.02;
-  }
 
   for (auto &pObject: objects) {
     if (!pObject->isVisible())
@@ -109,7 +93,7 @@ void Game::Update(float secs_per_frame, bool &fire) {
 
     auto *pAsteroid = dynamic_cast<Asteroid*>(pObject.get());
     if (pAsteroid != nullptr)
-      pObject->setRotationAngle(pObject->getRotationAngle() - (float) M_PI / 72);
+      pObject->setRotationAngle(pObject->getRotationAngle() + 5);
 
     pObject->move(secs_per_frame);
   }
@@ -121,4 +105,3 @@ void Game::Update(float secs_per_frame, bool &fire) {
 }
 
 int Game::GetScore() const { return score; }
-int Game::GetSize() const { return snake.size; }
