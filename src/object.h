@@ -30,7 +30,8 @@ private:
 
 class Object {
 public:
-  Object(SDL_FPoint position, int rotationAngle, float speed, int directionAngle, float maxSpeed);
+  Object(SDL_FPoint position, int rotationAngle, float speed, int directionAngle, float maxSpeed,
+         bool checkDistanceTraveled = false);
 
   static void setScreenDimensions(float width, float height);
   void addPoints(std::vector<SDL_FPoint> &pts);
@@ -38,11 +39,14 @@ public:
   void setRotationAngle(int newRotationAngle);
   void setSpeed(float newSpeed);
   void setDirectionAngle(int directionAngle);
+  void setActive(bool active) { this->active = active; }
 
   SDL_FPoint getPosition() const { return position; }
   int getRotationAngle() const { return rotationAngle; }
   float getSpeed() const { return speed; }
   int getDirectionAngle() const { return directionAngle; }
+  float getDistanceTraveled() const { return distanceTraveled; }
+  bool getActive() const { return active; }
   const std::vector<SDL_FPoint> &getRotatedPoints() const { return rotatedPts; }
   const std::vector<SDL_FPoint> &getTranslatedPoints() const { return translatedPts; }
   const std::vector<SDL_Point> &getTranslatedPointsI() const { return translatedPtsI; }
@@ -70,6 +74,10 @@ private:
   float maxSpeed;
   float xSpeed{0};
   float ySpeed{0};
+  bool checkDistanceTraveled{false};
+  float distanceTraveled{0};
+  float maxDistanceTraveled{0};
+  bool active{true};
 
   std::vector<SDL_FPoint> points;
   std::vector<SDL_FPoint> rotatedPts;

@@ -17,8 +17,8 @@ Renderer::Renderer(const std::size_t screen_width,
 
   // Create Window
   sdl_window = SDL_CreateWindow("Asteroids Game", SDL_WINDOWPOS_CENTERED,
-                                SDL_WINDOWPOS_CENTERED, screen_width,
-                                screen_height, SDL_WINDOW_SHOWN);
+                                SDL_WINDOWPOS_CENTERED, (int) screen_width,
+                                (int) screen_height, SDL_WINDOW_SHOWN);
 
   if (nullptr == sdl_window) {
     std::cerr << "Window could not be created.\n";
@@ -38,20 +38,10 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-void Renderer::Render(SDL_Point const &food, std::vector<std::unique_ptr<Object>> &objects) {
-  SDL_Rect block;
-  block.w = screen_width / grid_width;
-  block.h = screen_height / grid_height;
-
+void Renderer::Render(std::vector<std::unique_ptr<Object>> &objects) {
   // Clear screen
   SDL_SetRenderDrawColor(sdl_renderer, 0x1E, 0x1E, 0x1E, 0xFF);
   SDL_RenderClear(sdl_renderer);
-
-  // Render food
-  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xCC, 0x00, 0xFF);
-  block.x = food.x * block.w;
-  block.y = food.y * block.h;
-  SDL_RenderFillRect(sdl_renderer, &block);
 
   // Render asteroid objects
   for (auto &pObject: objects) {

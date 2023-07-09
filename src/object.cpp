@@ -70,14 +70,18 @@ bool Line::intersect(const Line& line) const
   return false;
 }
 
-Object::Object(SDL_FPoint position, int rotationAngle, float speed, int directionAngle, float maxSpeed)
-  : position(position), maxSpeed(maxSpeed)
+Object::Object(SDL_FPoint position, int rotationAngle, float speed, int directionAngle, float maxSpeed,
+               bool checkDistanceTraveled)
+  : position(position), maxSpeed(maxSpeed), checkDistanceTraveled(checkDistanceTraveled)
 {
   if (maxSpeed < 0.0)
     throw std::range_error("Negative max speed!");
   setRotationAngle(rotationAngle);
   setSpeed(speed);
   setDirectionAngle(directionAngle);
+  if (screenWidth <= 0 || screenHeight <= 0)
+    throw std::range_error("Object::screenWidth or Object::screenHeight have not been set!");
+  maxDistanceTraveled = fmin(screenWidth, screenHeight) * 3 / 4;
 }
 
 void Object::setScreenDimensions(float width, float height)
@@ -115,8 +119,8 @@ void Object::setSpeed(float newSpeed)
   else
     speed = newSpeed;
 
-  xSpeed = speed * Object::cosine(directionAngle);
-  ySpeed = speed * Object::sine(directionAngle);
+  xSpeed = speed * cosine(directionAngle);
+  ySpeed = speed * sine(directionAngle);
 }
 
 void Object::setDirectionAngle(int newDirectionAngle)
@@ -124,8 +128,8 @@ void Object::setDirectionAngle(int newDirectionAngle)
   if (newDirectionAngle == directionAngle)
     return;
   directionAngle = wrapAngle(newDirectionAngle);
-  xSpeed = speed * Object::cosine(directionAngle);
-  ySpeed = speed * Object::sine(directionAngle);
+  xSpeed = speed * cosine(directionAngle);
+  ySpeed = speed * sine(directionAngle);
 }
 
 //
@@ -190,6 +194,11 @@ void Object::move(float timeDelta)
 {
   position = {position.x + xSpeed * timeDelta, position.y + ySpeed * timeDelta};
   translatePoints();
+  if (checkDistanceTraveled) {
+    distanceTraveled += speed * timeDelta;
+    if (distanceTraveled > maxDistanceTraveled)
+      active = false;
+  }
 }
 
 void Object::wrapAround() {

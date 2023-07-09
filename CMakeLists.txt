@@ -14,6 +14,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS} src)
 
-add_executable(AsteroidsGame src/main.cpp src/game.cpp src/controller.cpp src/renderer.cpp src/snake.cpp src/object.cpp src/object.h src/asteroid.h src/asteroid.cpp src/fastSineCosine.cpp src/fastSineCosine.h)
+add_executable(AsteroidsGame src/main.cpp src/game.cpp src/controller.cpp src/renderer.cpp src/object.cpp src/asteroid.cpp src/fastSineCosine.cpp)
 string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES)
 target_link_libraries(AsteroidsGame ${SDL2_LIBRARIES})

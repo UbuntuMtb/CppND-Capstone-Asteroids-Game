@@ -12,7 +12,7 @@ class Renderer {
            const std::size_t grid_width, const std::size_t grid_height);
   ~Renderer();
 
-  void Render(SDL_Point const &food, std::vector<std::unique_ptr<Object>> &objects);
+  void Render(std::vector<std::unique_ptr<Object>> &objects);
   void UpdateWindowTitle(int score, int fps);
 
  private:

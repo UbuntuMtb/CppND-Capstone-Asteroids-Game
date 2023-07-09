@@ -7,8 +7,6 @@ Game::Game(std::size_t grid_width, std::size_t grid_height, float maxSpeed)
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)),
       maxSpeed(maxSpeed) {
-  PlaceFood();
-
   objects.emplace_back(new Asteroid({500, 220}, 50.0, -135, maxSpeed));
   objects.emplace_back(new Asteroid({500, 320}, 50.0, -135, maxSpeed));
   objects.emplace_back(new Asteroid({300, 200}, 60.0, 45, maxSpeed));
@@ -16,16 +14,6 @@ Game::Game(std::size_t grid_width, std::size_t grid_height, float maxSpeed)
 
   pShip = new Ship({300, 300}, 0.0, 0, maxSpeed);
   objects.emplace_back(pShip);
-
-//  asteroids.emplace_back(SDL_FPoint{500, 320}, 50.0, -3 * M_PI / 4, maxSpeed);
-//  asteroids.emplace_back(SDL_FPoint{300, 200}, 60.0, M_PI / 4, maxSpeed);
-//  asteroids.emplace_back(SDL_FPoint{200, 200}, 60.0, 0, maxSpeed);
-//  asteroids.emplace_back(SDL_FPoint{200, 400}, 60.0, M_PI / 2, maxSpeed);
-//  ship = Ship({300, 300}, 0.0, -M_PI / 2, maxSpeed);
-
-//  for (Asteroid &asteroid: asteroids)
-//    objects.push_back(&asteroid);
-//  objects.push_back(&ship);
 }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
@@ -45,7 +33,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     // Input, Update, Render - the main game loop.
     controller.HandleInput(running, *pShip, fire);
     Update(secs_per_frame, fire);
-    renderer.Render(food, objects);
+    renderer.Render(objects);
 
     frame_end = SDL_GetTicks();
 
@@ -70,8 +58,8 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   }
 }
 
-void Game::PlaceFood() {
-/*  int x, y;
+/*void Game::PlaceFood() {
+  int x, y;
   while (true) {
     x = random_w(engine);
     y = random_h(engine);
@@ -82,10 +70,18 @@ void Game::PlaceFood() {
       food.y = y;
       return;
     }
-  }*/
-}
+  }
+}*/
 
 void Game::Update(float secs_per_frame, bool &fire) {
+
+  for (auto it = objects.begin(); it != objects.end();) {
+    auto &pObject = *it;
+    if (!pObject->getActive())
+      it = objects.erase(it);
+    else
+      ++it;
+  }
 
   for (auto &pObject: objects) {
     if (!pObject->isVisible())
@@ -98,10 +94,24 @@ void Game::Update(float secs_per_frame, bool &fire) {
     pObject->move(secs_per_frame);
   }
 
+  for (auto &pObject: objects) {
+    auto *pBullet = dynamic_cast<Bullet*>(pObject.get());
+    if (pBullet != nullptr) {
+      for (auto &pObject2: objects) {
+        auto *pAsteroid = dynamic_cast<Asteroid*>(pObject2.get());
+        if (pAsteroid != nullptr) {
+          if (pAsteroid->isInside(pBullet->getPosition())) {
+            pAsteroid->setActive(false);
+            pBullet->setActive(false);
+            break;
+          }
+        }
+      }
+    }
+  }
+
   if (fire) {
-    auto *bullet = new Bullet(pShip->getPosition(), maxSpeed, pShip->getRotationAngle(), maxSpeed);
-    objects.emplace_back(bullet);
+    auto *pBullet = new Bullet(pShip->getPosition(), maxSpeed, pShip->getRotationAngle(), maxSpeed);
+    objects.emplace_back(pBullet);
   }
 }
-
-int Game::GetScore() const { return score; }

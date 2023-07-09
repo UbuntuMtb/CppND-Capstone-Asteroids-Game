@@ -29,7 +29,7 @@ std::string Ship::toString()
 }
 
 Bullet::Bullet(SDL_FPoint position, float speed, int directionAngle, float maxSpeed)
-  : Object (position, 0, speed, directionAngle, maxSpeed) {
+  : Object (position, 0, speed, directionAngle, maxSpeed, true) {
   std::vector<SDL_FPoint> points = {{2, 2}, {-2, 2}, {-2, -2}, {2, -2}};
   addPoints(points);
 }

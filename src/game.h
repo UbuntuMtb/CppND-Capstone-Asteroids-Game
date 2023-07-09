@@ -13,11 +13,9 @@ class Game {
   Game(std::size_t grid_width, std::size_t grid_height, float maxSpeed);
   void Run(Controller const &controller, Renderer &renderer,
            std::size_t target_frame_duration);
-  int GetScore() const;
+  int GetScore() const {  return score; }
 
  private:
-  SDL_Point food{0, 0};
-
   std::random_device dev;
   std::mt19937 engine;
   std::uniform_int_distribution<int> random_w;
@@ -31,7 +29,6 @@ class Game {
   std::vector<std::unique_ptr<Object>> objects;
   float maxSpeed;
 
-  void PlaceFood();
   void Update(float secs_per_frame, bool &fire);
 };
 
