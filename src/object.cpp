@@ -70,9 +70,10 @@ bool Line::intersect(const Line& line) const
   return false;
 }
 
-Object::Object(SDL_FPoint position, int rotationAngle, float speed, int directionAngle, float maxSpeed,
-               bool checkDistanceTraveled)
-  : position(position), maxSpeed(maxSpeed), checkDistanceTraveled(checkDistanceTraveled)
+Object::Object(SDL_FPoint position, int rotationAngle, int directionAngle, float speed, float maxSpeed,
+               int rotationSpeed, int maxRotationSpeed, bool checkDistanceTraveled)
+  : position(position), maxSpeed(maxSpeed), rotationSpeed(rotationSpeed), maxRotationSpeed(maxRotationSpeed),
+    checkDistanceTraveled(checkDistanceTraveled)
 {
   if (maxSpeed < 0.0)
     throw std::range_error("Negative max speed!");
@@ -130,6 +131,19 @@ void Object::setDirectionAngle(int newDirectionAngle)
   directionAngle = wrapAngle(newDirectionAngle);
   xSpeed = speed * cosine(directionAngle);
   ySpeed = speed * sine(directionAngle);
+}
+
+void Object::setRotationSpeed(int newRotationSpeed)
+{
+  if (newRotationSpeed == rotationSpeed)
+    return;
+
+  if (newRotationSpeed > maxRotationSpeed)
+    rotationSpeed = maxRotationSpeed;
+  else if (newRotationSpeed < -maxRotationSpeed)
+    rotationSpeed = -maxRotationSpeed;
+  else
+    rotationSpeed = newRotationSpeed;
 }
 
 //
@@ -192,6 +206,9 @@ void Object::translatePoints()
 
 void Object::move(float timeDelta)
 {
+  int newRotationAngle = getRotationAngle() + (int)((float) getRotationSpeed() * timeDelta);
+  setRotationAngle(newRotationAngle);
+
   position = {position.x + xSpeed * timeDelta, position.y + ySpeed * timeDelta};
   translatePoints();
   if (checkDistanceTraveled) {

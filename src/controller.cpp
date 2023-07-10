@@ -22,11 +22,13 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
           break;
 
         case SDLK_LEFT:
-          ship.setRotationAngle(ship.getRotationAngle() - 5);
+          ship.setRotationSpeed(ship.getRotationSpeed() - 5);
+          //ship.setRotationAngle(ship.getRotationAngle() - 5);
           break;
 
         case SDLK_RIGHT:
-          ship.setRotationAngle(ship.getRotationAngle() + 5);
+          ship.setRotationSpeed(ship.getRotationSpeed() + 5);
+          //ship.setRotationAngle(ship.getRotationAngle() + 5);
           break;
 
         case SDLK_SPACE:
@@ -35,6 +37,18 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
       }
     }
   }
-  if (!keyPressed)
+  if (!keyPressed) {
     ship.setSpeed(ship.getSpeed() - 3);
+
+    if (ship.getRotationSpeed() > 0) {
+      ship.setRotationSpeed(ship.getRotationSpeed() - 15);
+      if (ship.getRotationSpeed() < 0)
+        ship.setRotationSpeed(0);
+    }
+    else if (ship.getRotationSpeed() < 0) {
+      ship.setRotationSpeed(ship.getRotationSpeed() + 15);
+      if (ship.getRotationSpeed() > 0)
+        ship.setRotationSpeed(0);
+    }
+  }
 }

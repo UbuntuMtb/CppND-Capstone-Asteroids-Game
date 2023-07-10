@@ -29,7 +29,7 @@ int main() {
 
   std::vector<SDL_FPoint> points = {{0, 0}, {10, 0}, {10, 10}, {0, 10}};
   Object::setScreenDimensions(kScreenWidth, kScreenHeight);
-  Object object({0, 0}, 0, 0, 0, 100);
+  Object object({0, 0}, 0, 0, 0, 100, 0, 0);
   object.addPoints(points);
   SDL_FPoint point = {5, 5};
 

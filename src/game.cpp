@@ -87,9 +87,9 @@ void Game::Update(float secs_per_frame, bool &fire) {
     if (!pObject->isVisible())
       pObject->wrapAround();
 
-    auto *pAsteroid = dynamic_cast<Asteroid*>(pObject.get());
-    if (pAsteroid != nullptr)
-      pObject->setRotationAngle(pObject->getRotationAngle() + 5);
+    //auto *pAsteroid = dynamic_cast<Asteroid*>(pObject.get());
+    //if (pAsteroid != nullptr)
+    //  pObject->setRotationAngle(pObject->getRotationAngle() + 5);
 
     pObject->move(secs_per_frame);
   }
