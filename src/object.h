@@ -12,10 +12,10 @@
 #include "SDL.h"
 #include "fastSineCosine.h"
 
-enum PointsOrientation { poCollinear = 0, poCCW, poCW};
-
 class Line {
 public:
+  enum PointsOrientation { poCollinear = 0, poCCW, poCW};
+
   Line(const SDL_FPoint& p0, const SDL_FPoint& p1);
   SDL_FPoint P0() const { return p0; }
   SDL_FPoint P1() const { return p1; }
@@ -30,7 +30,8 @@ private:
 
 class Object {
 public:
-  Object(SDL_FPoint position, float rotationAngle, float directionAngle, float speed, float maxSpeed, float rotationSpeed, float maxRotationSpeed,
+  Object(SDL_FPoint position, float rotationAngle, float directionAngle,
+         float speed, float maxSpeed, float rotationSpeed, float maxRotationSpeed,
          bool checkDistanceTraveled = false);
 
   static void setScreenDimensions(float width, float height);
@@ -49,6 +50,7 @@ public:
   float getDistanceTraveled() const { return distanceTraveled; }
   bool getDestroyed() const { return destroyed; }
   float getRotationSpeed() const { return rotationSpeed; }
+  std::vector<SDL_FPoint > &getPoints() {return points; }
   const std::vector<SDL_FPoint> &getRotatedPoints() const { return rotatedPts; }
   const std::vector<SDL_FPoint> &getTranslatedPoints() const { return translatedPts; }
 //  const std::vector<SDL_Point> &getTranslatedPointsI() const { return translatedPtsI; }

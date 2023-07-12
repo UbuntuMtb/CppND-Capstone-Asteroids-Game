@@ -31,7 +31,7 @@ bool Line::onSegment(const SDL_FPoint& r) const
   return minX <= r.x && r.x <= maxX && minY <= r.y && r.y <= maxY;
 }
 
-PointsOrientation Line::orientation(const SDL_FPoint& r) const
+Line::PointsOrientation Line::orientation(const SDL_FPoint& r) const
 {
   float value = (r.y - p1.y) * (p1.x - p0.x) - (p1.y - p0.y) * (r.x - p1.x);
   if (value == 0.0)
@@ -167,7 +167,7 @@ bool Object::isInside(SDL_FPoint point)
 
     if (side.intersect(extendedLine))
     {
-      if (side.orientation(point) == poCollinear)
+      if (side.orientation(point) == Line::poCollinear)
         return side.onSegment(point);
       count++;
     }
