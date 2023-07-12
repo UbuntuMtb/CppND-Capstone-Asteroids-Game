@@ -8,8 +8,8 @@
 
 class Renderer {
  public:
-  Renderer(const std::size_t screen_width, const std::size_t screen_height,
-           const std::size_t grid_width, const std::size_t grid_height);
+  Renderer(std::size_t screen_width, std::size_t screen_height,
+           std::size_t grid_width, std::size_t grid_height);
   ~Renderer();
 
   void Render(std::vector<std::unique_ptr<Object>> &objects);

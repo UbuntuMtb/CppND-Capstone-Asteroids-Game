@@ -7,12 +7,12 @@ Game::Game(std::size_t grid_width, std::size_t grid_height, float maxSpeed)
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)),
       maxSpeed(maxSpeed) {
-  objects.emplace_back(new Asteroid({500, 220}, 50.0, -135, maxSpeed));
-  objects.emplace_back(new Asteroid({500, 320}, 50.0, -135, maxSpeed));
-  objects.emplace_back(new Asteroid({300, 200}, 60.0, 45, maxSpeed));
-  objects.emplace_back(new Asteroid({200, 400}, 60.0, 180, maxSpeed));
+  objects.emplace_back(new Asteroid({500, 220}, 50.0, -135, maxSpeed, 90, 90));
+  objects.emplace_back(new Asteroid({500, 320}, 50.0, -135, maxSpeed, 90, 90));
+  objects.emplace_back(new Asteroid({300, 200}, 60.0, 45, maxSpeed, 90, 90));
+  objects.emplace_back(new Asteroid({200, 400}, 60.0, 180, maxSpeed, 90, 90));
 
-  pShip = new Ship({300, 300}, 0.0, 0, maxSpeed);
+  pShip = new Ship({300, 300}, 0.0, 0, maxSpeed, 0, 180);
   objects.emplace_back(pShip);
 }
 
@@ -77,7 +77,7 @@ void Game::Update(float secs_per_frame, bool &fire) {
 
   for (auto it = objects.begin(); it != objects.end();) {
     auto &pObject = *it;
-    if (!pObject->getActive())
+    if (pObject->getDestroyed())
       it = objects.erase(it);
     else
       ++it;
@@ -101,8 +101,8 @@ void Game::Update(float secs_per_frame, bool &fire) {
         auto *pAsteroid = dynamic_cast<Asteroid*>(pObject2.get());
         if (pAsteroid != nullptr) {
           if (pAsteroid->isInside(pBullet->getPosition())) {
-            pAsteroid->setActive(false);
-            pBullet->setActive(false);
+            pAsteroid->setDestroyed(true);
+            pBullet->setDestroyed(true);
             break;
           }
         }

@@ -9,11 +9,12 @@ Sine::Sine() {
     values[i] = (float) sin(i * 2 * M_PI / 360);
 }
 
-float Sine::operator()(int angle) const {
-  angle = angle % 360;
+float Sine::operator()(float angle) const {
+  if (angle >= 360 || angle <= -360)
+    angle = std::fmod(angle, (float) 360);
   if (angle < 0)
     angle = 360 + angle;
-  return values[angle];
+  return values[(int) angle];
 }
 
 Cosine::Cosine() {
@@ -21,9 +22,10 @@ Cosine::Cosine() {
     values[i] = (float) cos(i * 2 * M_PI / 360);
 }
 
-float Cosine::operator()(int angle) const {
-  angle = angle % 360;
+float Cosine::operator()(float angle) const {
+  if (angle >= 360 || angle <= -360)
+    angle = std::fmod(angle, (float) 360);
   if (angle < 0)
     angle = 360 + angle;
-  return values[angle];
+  return values[(int) angle];
 }

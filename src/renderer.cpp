@@ -46,12 +46,12 @@ void Renderer::Render(std::vector<std::unique_ptr<Object>> &objects) {
   // Render asteroid objects
   for (auto &pObject: objects) {
     SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    const std::vector<SDL_Point> &points = pObject->getTranslatedPointsI();
+    auto &points = pObject->getTranslatedPoints();
 
     for (int i = 0; i < points.size(); i++) {
-      const SDL_Point &pt0 = points[i];
-      const SDL_Point &pt1 = points[(i + 1) % points.size()];
-      SDL_RenderDrawLine(sdl_renderer, pt0.x, pt0.y, pt1.x, pt1.y);
+      const SDL_FPoint &pt0 = points[i];
+      const SDL_FPoint &pt1 = points[(i + 1) % points.size()];
+      SDL_RenderDrawLine(sdl_renderer, (int) pt0.x, (int) pt0.y, (int) pt1.x, (int) pt1.y);
     }
   }
 

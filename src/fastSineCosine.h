@@ -7,7 +7,7 @@
 class Sine {
 public:
   Sine();
-  float operator()(int angle) const;
+  float operator()(float angle) const;
 private:
   float values[360];
 };
@@ -15,7 +15,7 @@ private:
 class Cosine {
 public:
   Cosine();
-  float operator()(int angle) const;
+  float operator()(float angle) const;
 private:
   float values[360];
 };

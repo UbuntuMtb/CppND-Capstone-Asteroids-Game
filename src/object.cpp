@@ -70,8 +70,8 @@ bool Line::intersect(const Line& line) const
   return false;
 }
 
-Object::Object(SDL_FPoint position, int rotationAngle, int directionAngle, float speed, float maxSpeed,
-               int rotationSpeed, int maxRotationSpeed, bool checkDistanceTraveled)
+Object::Object(SDL_FPoint position, float rotationAngle, float directionAngle, float speed, float maxSpeed,
+               float rotationSpeed, float maxRotationSpeed, bool checkDistanceTraveled)
   : position(position), maxSpeed(maxSpeed), rotationSpeed(rotationSpeed), maxRotationSpeed(maxRotationSpeed),
     checkDistanceTraveled(checkDistanceTraveled)
 {
@@ -94,6 +94,9 @@ void Object::setScreenDimensions(float width, float height)
 void Object::addPoints(std::vector<SDL_FPoint> &pts)
 {
   points = pts;
+  rotatedPts.resize(points.size());
+  translatedPts.resize(points.size());
+  //translatedPtsI.resize(points.size());
   rotatePoints();
   translatePoints();
 }
@@ -101,7 +104,7 @@ void Object::addPoints(std::vector<SDL_FPoint> &pts)
 //
 // Based on: https://www.geeksforgeeks.org/2d-transformation-rotation-objects/
 //
-void Object::setRotationAngle(int newRotationAngle) {
+void Object::setRotationAngle(float newRotationAngle) {
   if (newRotationAngle == rotationAngle)
     return;
   rotationAngle = wrapAngle(newRotationAngle);
@@ -124,7 +127,7 @@ void Object::setSpeed(float newSpeed)
   ySpeed = speed * sine(directionAngle);
 }
 
-void Object::setDirectionAngle(int newDirectionAngle)
+void Object::setDirectionAngle(float newDirectionAngle)
 {
   if (newDirectionAngle == directionAngle)
     return;
@@ -133,7 +136,7 @@ void Object::setDirectionAngle(int newDirectionAngle)
   ySpeed = speed * sine(directionAngle);
 }
 
-void Object::setRotationSpeed(int newRotationSpeed)
+void Object::setRotationSpeed(float newRotationSpeed)
 {
   if (newRotationSpeed == rotationSpeed)
     return;
@@ -184,29 +187,44 @@ void Object::rotatePoints()
 {
   float cosA = cosine(rotationAngle);
   float sinA = sine(rotationAngle);
-  rotatedPts.clear();
-
+  //rotatedPts.clear();
+/*
   for (const SDL_FPoint &pt: points) {
     SDL_FPoint rotatedPt {pt.x * cosA - pt.y * sinA, pt.x * sinA + pt.y * cosA};
     rotatedPts.emplace_back(rotatedPt);
+  }
+*/
+  for (int i = 0; i < points.size(); i++) {
+    SDL_FPoint &pt = points[i];
+    rotatedPts[i] = {pt.x * cosA - pt.y * sinA, pt.x * sinA + pt.y * cosA};
   }
 }
 
 void Object::translatePoints()
 {
-  translatedPts.clear();
-  translatedPtsI.clear();
+  //translatedPts.clear();
+  //translatedPtsI.clear();
 
-  for (const SDL_FPoint &point: rotatedPts)
-    translatedPts.push_back({point.x + position.x, point.y + position.y});
+  //for (const SDL_FPoint &point: rotatedPts)
+  //  translatedPts.push_back({point.x + position.x, point.y + position.y});
 
-  for (const SDL_FPoint &point: translatedPts)
-    translatedPtsI.push_back({(int) point.x, (int) point.y});
+  for (int i = 0; i < rotatedPts.size(); i++) {
+    SDL_FPoint &point = rotatedPts[i];
+    translatedPts[i] = SDL_FPoint{point.x + position.x, point.y + position.y};
+  }
+
+  //for (const SDL_FPoint &point: translatedPts)
+  //  translatedPtsI.push_back({(int) point.x, (int) point.y});
+
+//  for (int i = 0; i < translatedPts.size(); i++) {
+//    SDL_FPoint &point = translatedPts[i];
+//    translatedPtsI[i] = SDL_Point{(int) point.x, (int) point.y};
+//  }
 }
 
 void Object::move(float timeDelta)
 {
-  int newRotationAngle = getRotationAngle() + (int)((float) getRotationSpeed() * timeDelta);
+  float newRotationAngle = getRotationAngle() + getRotationSpeed() * timeDelta;
   setRotationAngle(newRotationAngle);
 
   position = {position.x + xSpeed * timeDelta, position.y + ySpeed * timeDelta};
@@ -214,7 +232,7 @@ void Object::move(float timeDelta)
   if (checkDistanceTraveled) {
     distanceTraveled += speed * timeDelta;
     if (distanceTraveled > maxDistanceTraveled)
-      active = false;
+      destroyed = true;
   }
 }
 
@@ -274,9 +292,9 @@ std::string Object::toString() {
     "direction: " + std::to_string(directionAngle);
 }
 
-int Object::wrapAngle(int angle) {
+float Object::wrapAngle(float angle) {
   if (angle >= 360 || angle <= -360)
-    return angle % 360;
+    return std::fmod(angle, (float) 360);
   else
     return angle;
 }

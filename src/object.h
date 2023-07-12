@@ -30,28 +30,28 @@ private:
 
 class Object {
 public:
-  Object(SDL_FPoint position, int rotationAngle, int directionAngle, float speed, float maxSpeed, int rotationSpeed, int maxRotationSpeed,
+  Object(SDL_FPoint position, float rotationAngle, float directionAngle, float speed, float maxSpeed, float rotationSpeed, float maxRotationSpeed,
          bool checkDistanceTraveled = false);
 
   static void setScreenDimensions(float width, float height);
   void addPoints(std::vector<SDL_FPoint> &pts);
 
-  void setRotationAngle(int newRotationAngle);
+  void setRotationAngle(float newRotationAngle);
   void setSpeed(float newSpeed);
-  void setDirectionAngle(int directionAngle);
-  void setActive(bool newActive) { active = newActive; }
-  void setRotationSpeed(int newRotationSpeed);
+  void setDirectionAngle(float directionAngle);
+  void setDestroyed(bool newDestroyed) { destroyed = newDestroyed; }
+  void setRotationSpeed(float newRotationSpeed);
 
   SDL_FPoint getPosition() const { return position; }
-  int getRotationAngle() const { return rotationAngle; }
+  float getRotationAngle() const { return rotationAngle; }
   float getSpeed() const { return speed; }
-  int getDirectionAngle() const { return directionAngle; }
+  float getDirectionAngle() const { return directionAngle; }
   float getDistanceTraveled() const { return distanceTraveled; }
-  bool getActive() const { return active; }
-  int getRotationSpeed() const { return rotationSpeed; }
+  bool getDestroyed() const { return destroyed; }
+  float getRotationSpeed() const { return rotationSpeed; }
   const std::vector<SDL_FPoint> &getRotatedPoints() const { return rotatedPts; }
   const std::vector<SDL_FPoint> &getTranslatedPoints() const { return translatedPts; }
-  const std::vector<SDL_Point> &getTranslatedPointsI() const { return translatedPtsI; }
+//  const std::vector<SDL_Point> &getTranslatedPointsI() const { return translatedPtsI; }
 
   bool isInside(SDL_FPoint point);
   bool isVisible();
@@ -60,7 +60,7 @@ public:
   void translatePoints();
   void move (float timeDelta);
   void wrapAround();
-  static int wrapAngle(int angle);
+  static float wrapAngle(float angle);
   virtual std::string toString();
 
 private:
@@ -70,23 +70,23 @@ private:
   static Cosine cosine;
 
   SDL_FPoint position;
-  int rotationAngle{0};
+  float rotationAngle{0};
   float speed{0};
-  int directionAngle{0};
+  float directionAngle{0};
   float maxSpeed;
   float xSpeed{0};
   float ySpeed{0};
   bool checkDistanceTraveled{false};
   float distanceTraveled{0};
   float maxDistanceTraveled{0};
-  bool active{true};
-  int rotationSpeed{0};
-  int maxRotationSpeed{0};
+  bool destroyed{false};
+  float rotationSpeed{0};
+  float maxRotationSpeed{0};
 
   std::vector<SDL_FPoint> points;
   std::vector<SDL_FPoint> rotatedPts;
   std::vector<SDL_FPoint> translatedPts;
-  std::vector<SDL_Point> translatedPtsI;
+  //std::vector<SDL_Point> translatedPtsI;
 };
 
 #endif //OBJECT_H

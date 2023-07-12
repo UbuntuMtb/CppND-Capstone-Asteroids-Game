@@ -9,22 +9,22 @@
 
 class Asteroid: public Object {
 public:
-  Asteroid(SDL_FPoint position, float speed, int directionAngle, float maxSpeed);
+  Asteroid(SDL_FPoint position, float speed, float directionAngle, float maxSpeed, float rotationSpeed, float maxRotationSpeed);
   std::string toString() override;
 private:
 };
 
 class Ship: public Object {
 public:
-  Ship(SDL_FPoint position, float speed, int directionAngle, float maxSpeed);
-  Ship() : Ship({0, 0}, 0, 0, 0) {}
+  Ship(SDL_FPoint position, float speed, float directionAngle, float maxSpeed, float rotationSpeed, float maxRotationSpeed);
+  Ship() : Ship({0, 0}, 0, 0, 0, 0, 0) {}
   std::string toString() override;
 private:
 };
 
 class Bullet: public Object {
 public:
-  Bullet(SDL_FPoint position, float speed, int directionAngle, float maxSpeed);
+  Bullet(SDL_FPoint position, float speed, float directionAngle, float maxSpeed);
   std::string toString() override;
 };
 
