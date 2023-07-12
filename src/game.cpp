@@ -72,47 +72,38 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   }
 }*/
 
-void Game::Update(float secs_per_frame, bool &fire) {
-
-  for (auto it = objects.begin(); it != objects.end();) {
-    auto &pObject = *it;
-    if (pObject->getDestroyed()) {
-      auto *pAsteroid = dynamic_cast<Asteroid*>(pObject.get());
-      if (pAsteroid == nullptr || pAsteroid->getGeneration() == 3)
-        it = objects.erase(it);
-      else {
-        pAsteroid->setGeneration(pAsteroid->getGeneration() + 1);
-        pAsteroid->resize(0.5);
-        pAsteroid->setDirectionAngle(pAsteroid->getDirectionAngle() + 90);
-        auto pNewAsteroid = new Asteroid(*pAsteroid);
-        pNewAsteroid->setDirectionAngle(pNewAsteroid->getDirectionAngle() + 180);
-        objects.emplace_back(pNewAsteroid);
-      }
-    }
-    else
-      ++it;
-  }
-
+void Game::Update(float secs_per_frame, bool &fire)
+{
   for (auto &pObject: objects) {
     if (!pObject->isVisible())
       pObject->wrapAround();
-
-    //auto *pAsteroid = dynamic_cast<Asteroid*>(pObject.get());
-    //if (pAsteroid != nullptr)
-    //  pObject->setRotationAngle(pObject->getRotationAngle() + 5);
-
     pObject->move(secs_per_frame);
   }
 
   for (auto &pObject: objects) {
     auto *pBullet = dynamic_cast<Bullet*>(pObject.get());
-    if (pBullet != nullptr) {
+    if (pBullet != nullptr && !pBullet->getDestroyed()) {
       for (auto &pObject2: objects) {
         auto *pAsteroid = dynamic_cast<Asteroid*>(pObject2.get());
         if (pAsteroid != nullptr) {
           if (pAsteroid->isInside(pBullet->getPosition())) {
-            pAsteroid->setDestroyed(true);
             pBullet->setDestroyed(true);
+            if (pAsteroid->getGeneration() == 3) {
+              pAsteroid->setDestroyed(true);
+              switch (pAsteroid->getGeneration()){
+                case 1: score += 20; break;
+                case 2: score += 50; break;
+                case 3: score += 100; break;
+              }
+            }
+            else {
+              pAsteroid->setGeneration(pAsteroid->getGeneration() + 1);
+              pAsteroid->resize(0.75);
+              pAsteroid->setDirectionAngle(pAsteroid->getDirectionAngle() + 90);
+              auto pNewAsteroid = new Asteroid(*pAsteroid);
+              pNewAsteroid->setDirectionAngle(pNewAsteroid->getDirectionAngle() + 180);
+              objects.emplace_back(pNewAsteroid);
+            }
             break;
           }
         }
@@ -123,5 +114,13 @@ void Game::Update(float secs_per_frame, bool &fire) {
   if (fire) {
     auto *pBullet = new Bullet(pShip->getPosition(), pShip->getRotationAngle(), maxSpeed, maxSpeed);
     objects.emplace_back(pBullet);
+  }
+
+  for (auto it = objects.begin(); it != objects.end();) {
+    auto &pObject = *it;
+    if (pObject->getDestroyed())
+      it = objects.erase(it);
+    else
+      ++it;
   }
 }

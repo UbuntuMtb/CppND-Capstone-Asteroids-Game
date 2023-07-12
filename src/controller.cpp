@@ -22,12 +22,12 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
           break;
 
         case SDLK_LEFT:
-          ship.setRotationSpeed(ship.getRotationSpeed() - 36);
+          ship.setRotationSpeed(ship.getRotationSpeed() - 45);
           //ship.setRotationAngle(ship.getRotationAngle() - 5);
           break;
 
         case SDLK_RIGHT:
-          ship.setRotationSpeed(ship.getRotationSpeed() + 36);
+          ship.setRotationSpeed(ship.getRotationSpeed() + 45);
           //ship.setRotationAngle(ship.getRotationAngle() + 5);
           break;
 
@@ -42,12 +42,12 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
       ship.setSpeed(ship.getSpeed() - 7);
 
     if (ship.getRotationSpeed() > 0) {
-      ship.setRotationSpeed(ship.getRotationSpeed() - 36);
+      ship.setRotationSpeed(ship.getRotationSpeed() - 45);
       if (ship.getRotationSpeed() < 0)
         ship.setRotationSpeed(0);
     }
     else if (ship.getRotationSpeed() < 0) {
-      ship.setRotationSpeed(ship.getRotationSpeed() + 36);
+      ship.setRotationSpeed(ship.getRotationSpeed() + 45);
       if (ship.getRotationSpeed() > 0)
         ship.setRotationSpeed(0);
     }

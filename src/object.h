@@ -53,7 +53,6 @@ public:
   std::vector<SDL_FPoint > &getPoints() {return points; }
   const std::vector<SDL_FPoint> &getRotatedPoints() const { return rotatedPts; }
   const std::vector<SDL_FPoint> &getTranslatedPoints() const { return translatedPts; }
-//  const std::vector<SDL_Point> &getTranslatedPointsI() const { return translatedPtsI; }
 
   bool isInside(SDL_FPoint point);
   bool isVisible();
@@ -88,7 +87,6 @@ private:
   std::vector<SDL_FPoint> points;
   std::vector<SDL_FPoint> rotatedPts;
   std::vector<SDL_FPoint> translatedPts;
-  //std::vector<SDL_Point> translatedPtsI;
 };
 
 #endif //OBJECT_H

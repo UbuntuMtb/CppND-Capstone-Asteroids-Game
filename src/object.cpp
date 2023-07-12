@@ -187,13 +187,7 @@ void Object::rotatePoints()
 {
   float cosA = cosine(rotationAngle);
   float sinA = sine(rotationAngle);
-  //rotatedPts.clear();
-/*
-  for (const SDL_FPoint &pt: points) {
-    SDL_FPoint rotatedPt {pt.x * cosA - pt.y * sinA, pt.x * sinA + pt.y * cosA};
-    rotatedPts.emplace_back(rotatedPt);
-  }
-*/
+
   for (int i = 0; i < points.size(); i++) {
     SDL_FPoint &pt = points[i];
     rotatedPts[i] = {pt.x * cosA - pt.y * sinA, pt.x * sinA + pt.y * cosA};
@@ -202,24 +196,10 @@ void Object::rotatePoints()
 
 void Object::translatePoints()
 {
-  //translatedPts.clear();
-  //translatedPtsI.clear();
-
-  //for (const SDL_FPoint &point: rotatedPts)
-  //  translatedPts.push_back({point.x + position.x, point.y + position.y});
-
   for (int i = 0; i < rotatedPts.size(); i++) {
     SDL_FPoint &point = rotatedPts[i];
     translatedPts[i] = SDL_FPoint{point.x + position.x, point.y + position.y};
   }
-
-  //for (const SDL_FPoint &point: translatedPts)
-  //  translatedPtsI.push_back({(int) point.x, (int) point.y});
-
-//  for (int i = 0; i < translatedPts.size(); i++) {
-//    SDL_FPoint &point = translatedPts[i];
-//    translatedPtsI[i] = SDL_Point{(int) point.x, (int) point.y};
-//  }
 }
 
 void Object::move(float timeDelta)
