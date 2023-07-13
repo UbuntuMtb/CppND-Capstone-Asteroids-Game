@@ -38,9 +38,9 @@ int main() {
   else
     std::cout << "Point is outside.\n";
 
-  Renderer renderer(kScreenWidth, kScreenHeight, kGridWidth, kGridHeight);
+  Renderer renderer(kScreenWidth, kScreenHeight);
   Controller controller;
-  Game game(kGridWidth, kGridHeight, kMaxSpeed);
+  Game game(kScreenWidth, kScreenHeight, kMaxSpeed);
   game.Run(controller, renderer, kMsPerFrame);
   std::cout << "Game has terminated successfully!\n";
   std::cout << "Score: " << game.GetScore() << "\n";

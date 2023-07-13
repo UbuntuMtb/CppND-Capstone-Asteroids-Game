@@ -2,16 +2,17 @@
 #include <iostream>
 #include "SDL.h"
 
-Game::Game(std::size_t grid_width, std::size_t grid_height, float maxSpeed)
-    : engine(dev()),
-      randomDirectionAngle(0, 360),
-      maxSpeed(maxSpeed) {
+Game::Game(std::size_t screen_width, std::size_t screen_height, float maxSpeed)
+    : screen_width(screen_width), screen_height(screen_height), maxSpeed(maxSpeed),
+      engine(dev()), randomDirectionAngle(0, 360)
+ {
   objects.emplace_back(new Asteroid({500, 220}, -135, 50, maxSpeed, 90, 90));
   objects.emplace_back(new Asteroid({500, 320}, 135, 50, maxSpeed, 90, 90));
   objects.emplace_back(new Asteroid({300, 200}, 45, 60, maxSpeed, 90, 90));
   objects.emplace_back(new Asteroid({200, 400}, 180, 60, maxSpeed, 90, 90));
 
-  pShip = new Ship({300, 300}, 0.0, 0, maxSpeed, 0, 180);
+  centerPoint = {(float) screen_width/2, (float) screen_height/2};
+  pShip = new Ship(centerPoint, 0.0, 0, maxSpeed, 0, 180);
   objects.emplace_back(pShip);
 }
 
@@ -43,7 +44,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
     // After every second, update the window title.
     if (frame_end - title_timestamp >= 1000) {
-      renderer.UpdateWindowTitle(score, frame_count);
+      renderer.UpdateWindowTitle(lives, score, frame_count);
       frame_count = 0;
       title_timestamp = frame_end;
     }
@@ -81,11 +82,13 @@ void Game::Update(float secs_per_frame, bool &fire)
   }
 
   for (auto &pObject: objects) {
-    auto *pBullet = dynamic_cast<Bullet*>(pObject.get());
-    if (pBullet != nullptr && !pBullet->getDestroyed()) {
+    auto pBullet = dynamic_cast<Bullet*>(pObject.get());
+    if (pBullet != nullptr && !pBullet->getDestroyed())
+    {
       for (auto &pObject2: objects) {
-        auto *pAsteroid = dynamic_cast<Asteroid*>(pObject2.get());
-        if (pAsteroid != nullptr) {
+        auto pAsteroid = dynamic_cast<Asteroid*>(pObject2.get());
+        if (pAsteroid != nullptr)
+        {
           if (pAsteroid->isInside(pBullet->getPosition())) {
             pBullet->setDestroyed(true);
             if (pAsteroid->getGeneration() == 3) {
@@ -111,6 +114,20 @@ void Game::Update(float secs_per_frame, bool &fire)
     }
   }
 
+  for (auto &pObject: objects) {
+    auto pAsteroid = dynamic_cast<Asteroid*>(pObject.get());
+    if (pAsteroid != nullptr)
+    if (pShip->isInside((*pAsteroid))) {
+      if (lives > 0) {
+        lives--;
+        pShip->setPosition(centerPoint);
+      } else {
+        pShip->setDestroyed(true);
+      }
+      break;
+    }
+  }
+
   if (fire) {
     auto *pBullet = new Bullet(pShip->getPosition(), pShip->getRotationAngle(), maxSpeed, maxSpeed);
     objects.emplace_back(pBullet);
@@ -118,8 +135,12 @@ void Game::Update(float secs_per_frame, bool &fire)
 
   for (auto it = objects.begin(); it != objects.end();) {
     auto &pObject = *it;
-    if (pObject->getDestroyed())
+    if (pObject->getDestroyed()) {
+      auto ptrShip = dynamic_cast<Ship *>(pObject.get());
+      if (ptrShip != nullptr)
+        pShip = nullptr;
       it = objects.erase(it);
+    }
     else
       ++it;
   }

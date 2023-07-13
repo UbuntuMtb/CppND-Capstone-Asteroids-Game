@@ -10,7 +10,7 @@
 
 class Game {
  public:
-  Game(std::size_t grid_width, std::size_t grid_height, float maxSpeed);
+  Game(std::size_t screen_width, std::size_t screen_height, float maxSpeed);
   void Run(Controller const &controller, Renderer &renderer,
            std::size_t target_frame_duration);
   [[nodiscard]] int GetScore() const {  return score; }
@@ -23,6 +23,10 @@ class Game {
   std::uniform_int_distribution<int> randomDirectionAngle;
 
   int score{0};
+  int lives{3};
+  const std::size_t screen_width;
+  const std::size_t screen_height;
+  SDL_FPoint centerPoint{0,0};
 
   //std::vector<Asteroid> asteroids;
   Ship *pShip{nullptr};

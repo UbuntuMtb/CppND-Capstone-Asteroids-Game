@@ -175,6 +175,14 @@ bool Object::isInside(SDL_FPoint point)
   return count & 1;
 }
 
+bool Object::isInside(const Object &object)
+{
+  for (auto point: object.getTranslatedPoints())
+    if (isInside(point))
+      return true;
+  return false;
+}
+
 bool Object::isVisible() {
   for (const SDL_FPoint &point: translatedPts) {
     if (0 <= point.x && point.x < screenWidth && 0 < point.y && point.y < screenHeight)

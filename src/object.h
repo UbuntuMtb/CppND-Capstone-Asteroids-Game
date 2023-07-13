@@ -37,6 +37,7 @@ public:
   static void setScreenDimensions(float width, float height);
   void addPoints(std::vector<SDL_FPoint> &pts);
 
+  void setPosition(SDL_FPoint newPosition) { position = newPosition; }
   void setRotationAngle(float newRotationAngle);
   void setSpeed(float newSpeed);
   void setDirectionAngle(float directionAngle);
@@ -55,6 +56,7 @@ public:
   const std::vector<SDL_FPoint> &getTranslatedPoints() const { return translatedPts; }
 
   bool isInside(SDL_FPoint point);
+  bool isInside(const Object &object);
   bool isVisible();
 
   void rotatePoints();
