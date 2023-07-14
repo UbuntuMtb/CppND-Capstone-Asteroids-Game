@@ -89,7 +89,8 @@ void Game::Update(float secs_per_frame, bool &fire)
         auto pAsteroid = dynamic_cast<Asteroid*>(pObject2.get());
         if (pAsteroid != nullptr)
         {
-          if (pAsteroid->isInside(pBullet->getPosition())) {
+          //if (pAsteroid->isInside(pBullet->getPosition())) {
+          if (pBullet->collision(*pAsteroid)) {
             pBullet->setDestroyed(true);
             if (pAsteroid->getGeneration() == 3) {
               pAsteroid->setDestroyed(true);
@@ -117,7 +118,7 @@ void Game::Update(float secs_per_frame, bool &fire)
   for (auto &pObject: objects) {
     auto pAsteroid = dynamic_cast<Asteroid*>(pObject.get());
     if (pAsteroid != nullptr)
-    if (pShip->isInside((*pAsteroid))) {
+    if (pShip->collision((*pAsteroid))) {
       if (lives > 0) {
         lives--;
         pShip->setPosition(centerPoint);
@@ -129,7 +130,7 @@ void Game::Update(float secs_per_frame, bool &fire)
   }
 
   if (fire) {
-    auto *pBullet = new Bullet(pShip->getPosition(), pShip->getRotationAngle(), maxSpeed, maxSpeed);
+    auto *pBullet = new Bullet(pShip->getPosition(), pShip->getRotationAngle(), 2 * maxSpeed, 2 * maxSpeed);
     objects.emplace_back(pBullet);
   }
 

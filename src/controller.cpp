@@ -5,30 +5,47 @@
 void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
   SDL_Event e;
   bool keyPressed = false;
-  fire = false;
+  static Uint32 currentTime;
+  static Uint32 speedUpTimeout;
+  static Uint32 speedDwTimeout;
+  static bool doSpeedDw = false;
 
-  while (SDL_PollEvent(&e)) {
+  fire = false;
+  currentTime = SDL_GetTicks();
+
+  while (SDL_PollEvent(&e))
+  {
     keyPressed = true;
     if (e.type == SDL_QUIT) {
       running = false;
-    } else if (e.type == SDL_KEYDOWN) {
+      //std::cout << std::hex << e.type << std::endl;
+    }
+    else if (e.type == SDL_KEYDOWN) {
+      //std::cout << std::hex << e.type << " " << e.key.keysym.sym << std::endl;
       switch (e.key.keysym.sym) {
         case SDLK_UP:
-          ship.setDirectionAngle(ship.getRotationAngle());
-          ship.setSpeed(ship.getSpeed() + 25);
+          if (ship.getSpeed() < ship.getMaxSpeed() / 2) {
+            ship.setDirectionAngle(ship.getRotationAngle());
+            ship.setSpeed(ship.getMaxSpeed() / 2);
+            speedUpTimeout = currentTime + 1500;
+          }
+          else if (currentTime >= speedUpTimeout) {
+            if (ship.getSpeed() < ship.getMaxSpeed())
+              ship.setSpeed(ship.getMaxSpeed());
+          }
           break;
 
         case SDLK_DOWN:
           break;
 
         case SDLK_LEFT:
-          ship.setRotationSpeed(ship.getRotationSpeed() - 45);
-          //ship.setRotationAngle(ship.getRotationAngle() - 5);
+          //ship.setRotationSpeed(ship.getRotationSpeed() - 45);
+          ship.setRotationSpeed(-ship.getMaxRotationSpeed());
           break;
 
         case SDLK_RIGHT:
-          ship.setRotationSpeed(ship.getRotationSpeed() + 45);
-          //ship.setRotationAngle(ship.getRotationAngle() + 5);
+          //ship.setRotationSpeed(ship.getRotationSpeed() + 45);
+          ship.setRotationSpeed(ship.getMaxRotationSpeed());
           break;
 
         case SDLK_SPACE:
@@ -36,11 +53,30 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
           break;
       }
     }
+    else if (e.type == SDL_KEYUP) {
+      switch (e.key.keysym.sym) {
+        case SDLK_UP:
+          doSpeedDw = true;
+          speedDwTimeout = currentTime + 1000;
+          break;
+        case SDLK_LEFT:
+        case SDLK_RIGHT:
+          ship.setRotationSpeed(0);
+          break;
+      }
+    }
+    else {
+      //std::cout << std::hex << e.type << std::endl;
+    }
   }
-  if (!keyPressed) {
-    if (ship.getSpeed() > 0)
-      ship.setSpeed(ship.getSpeed() - 7);
 
+  if (doSpeedDw && currentTime > speedDwTimeout) {
+    ship.setSpeed(ship.getSpeed() - 5);
+    if (ship.getSpeed() == 0)
+      doSpeedDw = false;
+  }
+
+/*  if (!keyPressed) {
     if (ship.getRotationSpeed() > 0) {
       ship.setRotationSpeed(ship.getRotationSpeed() - 45);
       if (ship.getRotationSpeed() < 0)
@@ -51,5 +87,7 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
       if (ship.getRotationSpeed() > 0)
         ship.setRotationSpeed(0);
     }
-  }
+  }*/
+  //std::cout << ship.getSpeed() << std::endl;
+  //std::cout << ship.getRotationSpeed() << std::endl;
 }

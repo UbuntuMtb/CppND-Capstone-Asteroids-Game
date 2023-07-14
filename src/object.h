@@ -39,24 +39,28 @@ public:
 
   void setPosition(SDL_FPoint newPosition) { position = newPosition; }
   void setRotationAngle(float newRotationAngle);
-  void setSpeed(float newSpeed);
   void setDirectionAngle(float directionAngle);
-  void setDestroyed(bool newDestroyed) { destroyed = newDestroyed; }
+  void setSpeed(float newSpeed);
   void setRotationSpeed(float newRotationSpeed);
+  void setDestroyed(bool newDestroyed) { destroyed = newDestroyed; }
 
   SDL_FPoint getPosition() const { return position; }
   float getRotationAngle() const { return rotationAngle; }
-  float getSpeed() const { return speed; }
   float getDirectionAngle() const { return directionAngle; }
+  float getSpeed() const { return speed; }
+  float getRotationSpeed() const { return rotationSpeed; }
+  float getMaxSpeed() const { return maxSpeed; }
+  float getMaxRotationSpeed() const { return maxRotationSpeed; }
   float getDistanceTraveled() const { return distanceTraveled; }
   bool getDestroyed() const { return destroyed; }
-  float getRotationSpeed() const { return rotationSpeed; }
+
   std::vector<SDL_FPoint > &getPoints() {return points; }
   const std::vector<SDL_FPoint> &getRotatedPoints() const { return rotatedPts; }
   const std::vector<SDL_FPoint> &getTranslatedPoints() const { return translatedPts; }
 
-  bool isInside(SDL_FPoint point);
-  bool isInside(const Object &object);
+  bool isInside(SDL_FPoint point) const;
+  bool isInside(const Object &object) const;
+  bool collision(const Object &object) const;
   bool isVisible();
 
   void rotatePoints();

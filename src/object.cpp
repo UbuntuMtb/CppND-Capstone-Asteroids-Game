@@ -111,6 +111,15 @@ void Object::setRotationAngle(float newRotationAngle) {
   rotatePoints();
 }
 
+void Object::setDirectionAngle(float newDirectionAngle)
+{
+  if (newDirectionAngle == directionAngle)
+    return;
+  directionAngle = wrapAngle(newDirectionAngle);
+  xSpeed = speed * cosine(directionAngle);
+  ySpeed = speed * sine(directionAngle);
+}
+
 void Object::setSpeed(float newSpeed)
 {
   if (newSpeed == speed)
@@ -123,15 +132,6 @@ void Object::setSpeed(float newSpeed)
   else
     speed = newSpeed;
 
-  xSpeed = speed * cosine(directionAngle);
-  ySpeed = speed * sine(directionAngle);
-}
-
-void Object::setDirectionAngle(float newDirectionAngle)
-{
-  if (newDirectionAngle == directionAngle)
-    return;
-  directionAngle = wrapAngle(newDirectionAngle);
   xSpeed = speed * cosine(directionAngle);
   ySpeed = speed * sine(directionAngle);
 }
@@ -152,7 +152,7 @@ void Object::setRotationSpeed(float newRotationSpeed)
 //
 // Based on https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
 //
-bool Object::isInside(SDL_FPoint point)
+bool Object::isInside(SDL_FPoint point) const
 {
   if (translatedPts.size() < 3)
     return false;
@@ -175,11 +175,20 @@ bool Object::isInside(SDL_FPoint point)
   return count & 1;
 }
 
-bool Object::isInside(const Object &object)
+bool Object::isInside(const Object &object) const
 {
   for (auto point: object.getTranslatedPoints())
     if (isInside(point))
       return true;
+  return false;
+}
+
+bool Object::collision(const Object &object) const
+{
+  if (isInside(object))
+    return true;
+  if (object.isInside(*this))
+    return true;
   return false;
 }
 
