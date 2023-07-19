@@ -28,9 +28,7 @@ class Game {
   const std::size_t screen_height;
   SDL_FPoint centerPoint{0,0};
 
-  //std::vector<Asteroid> asteroids;
   Ship *pShip{nullptr};
-  //std::vector<Object*> objects;
   std::vector<std::unique_ptr<Object>> objects;
   float maxSpeed;
 

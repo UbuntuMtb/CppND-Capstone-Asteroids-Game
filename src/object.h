@@ -30,17 +30,15 @@ private:
 
 class Object {
 public:
-  Object(SDL_FPoint position, float rotationAngle, float directionAngle,
-         float speed, /*float maxSpeed, */float rotationSpeed, /*float maxRotationSpeed,*/
-         float mass = 1, float frictionFactor = 1,
-         bool checkDistanceTraveled = false);
+  Object(SDL_FPoint position, float rotationAngle, float directionAngle, float speed, float rotationSpeed,
+         float mass = 1, float frictionFactor = 1, bool checkDistanceTraveled = false);
 
   static void setScreenDimensions(float width, float height);
   void addPoints(std::vector<SDL_FPoint> &pts);
 
   void setPosition(SDL_FPoint newPosition) { position = newPosition; }
   void setRotationAngle(float newRotationAngle);
-  void setDirectionAngle(float directionAngle);
+  virtual void setDirectionAngle(float directionAngle);
   void setSpeed(float newSpeed);
   void setRotationSpeed(float newRotationSpeed);
   void setDestroyed(bool newDestroyed) { destroyed = newDestroyed; }
@@ -51,8 +49,6 @@ public:
   float getDirectionAngle() const { return directionAngle; }
   float getSpeed() const { return speed; }
   float getRotationSpeed() const { return rotationSpeed; }
-  //float getMaxSpeed() const { return maxSpeed; }
-  //float getMaxRotationSpeed() const { return maxRotationSpeed; }
   float getDistanceTraveled() const { return distanceTraveled; }
   bool getDestroyed() const { return destroyed; }
 
@@ -85,7 +81,6 @@ private:
   float frictionFactor{0};
   float accelerationForce{0};
   float speed{0};
-  //float maxSpeed;
   float xSpeed{0};
   float ySpeed{0};
   bool checkDistanceTraveled{false};
@@ -93,8 +88,6 @@ private:
   float maxDistanceTraveled{0};
   bool destroyed{false};
   float rotationSpeed{0};
-  //float maxRotationSpeed{0};
-
 
   std::vector<SDL_FPoint> points;
   std::vector<SDL_FPoint> rotatedPts;

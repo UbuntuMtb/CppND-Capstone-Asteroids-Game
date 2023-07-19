@@ -104,10 +104,8 @@ void Game::Update(float secs_per_frame, bool &fire)
               pAsteroid->setGeneration(pAsteroid->getGeneration() + 1);
               pAsteroid->resize(0.75);
               pAsteroid->setDirectionAngle(pAsteroid->getDirectionAngle() + 90);
-              //pAsteroid->setSpeed(pAsteroid->getSpeed());
               auto pNewAsteroid = new Asteroid(*pAsteroid);
               pNewAsteroid->setDirectionAngle(pNewAsteroid->getDirectionAngle() + 180);
-              //pNewAsteroid->setSpeed(pNewAsteroid->getSpeed());
               objects.emplace_back(pNewAsteroid);
             }
             break;

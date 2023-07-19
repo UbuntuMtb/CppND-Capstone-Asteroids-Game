@@ -120,19 +120,14 @@ void Object::setDirectionAngle(float newDirectionAngle)
   if (newDirectionAngle == directionAngle)
     return;
   directionAngle = wrapAngle(newDirectionAngle);
-  //xSpeed = speed * cosine(directionAngle);
-  //ySpeed = speed * sine(directionAngle);
 }
 
 void Object::setSpeed(float newSpeed)
 {
   //if (newSpeed == speed)
   //  return;
-
   if (newSpeed < 0.0)
     speed = 0;
-  //else if (newSpeed > maxSpeed)
-  //  speed = maxSpeed;
   else
     speed = newSpeed;
 
@@ -144,12 +139,6 @@ void Object::setRotationSpeed(float newRotationSpeed)
 {
   if (newRotationSpeed == rotationSpeed)
     return;
-
-  /*if (newRotationSpeed > maxRotationSpeed)
-    rotationSpeed = maxRotationSpeed;
-  else if (newRotationSpeed < -maxRotationSpeed)
-    rotationSpeed = -maxRotationSpeed;
-  else*/
   rotationSpeed = newRotationSpeed;
 }
 
@@ -236,8 +225,6 @@ void Object::move(float timeDelta)
   float yNetForce = yAccForce - yFriction;
   float xAccel = xNetForce / mass;
   float yAccel = yNetForce / mass;
-  //float xAccel= xAccForce / mass;
-  //float yAccel = yAccForce / mass;
 
   position.x += xSpeed * timeDelta + xAccel * timeDelta * timeDelta / 2;
   position.y += ySpeed * timeDelta + yAccel * timeDelta * timeDelta / 2;
@@ -250,7 +237,6 @@ void Object::move(float timeDelta)
     ySpeed = 0;
   }
 
-  //position = {position.x + xSpeed * timeDelta, position.y + ySpeed * timeDelta};
   translatePoints();
   if (checkDistanceTraveled) {
     distanceTraveled += speed * timeDelta;
