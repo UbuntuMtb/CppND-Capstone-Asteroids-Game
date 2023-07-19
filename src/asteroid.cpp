@@ -5,8 +5,8 @@
 #include "asteroid.h"
 
 Asteroid::Asteroid(SDL_FPoint position, float directionAngle,
-                   float speed, float maxSpeed, float rotationSpeed, float maxRotationSpeed)
-  : Object(position, 0, directionAngle, speed, maxSpeed, rotationSpeed, maxRotationSpeed)
+                   float speed, /*float maxSpeed,*/ float rotationSpeed/*, float maxRotationSpeed*/)
+  : Object(position, 0, directionAngle, speed, rotationSpeed, 1, 0, false)
 {
   std::vector<SDL_FPoint> points = {{20, 20}, {20, -20}, {-20, -20}, {-20, 20}};
   addPoints(points);
@@ -23,9 +23,15 @@ void Asteroid::resize(float factor)
     point = {point.x * factor, point.y * factor};
 }
 
+void Asteroid::setDirectionAngle(float newDirectionAngle) {
+  Object::setDirectionAngle(newDirectionAngle);
+  setSpeed(getSpeed());
+}
+
 Ship::Ship(SDL_FPoint position, float directionAngle,
-           float speed, float maxSpeed, float rotationSpeed, float maxRotationSpeed)
-  : Object(position, -90, directionAngle, speed, maxSpeed, rotationSpeed, maxRotationSpeed)
+           float speed, /*float maxSpeed,*/ float rotationSpeed/*, float maxRotationSpeed*/,
+           float mass, float frictionFactor)
+  : Object(position, directionAngle, directionAngle, speed, rotationSpeed, mass, frictionFactor)
 {
   std::vector<SDL_FPoint> points = {{15, 0}, {-15, 10}, {-15, -10}};
   addPoints(points);
@@ -36,8 +42,8 @@ std::string Ship::toString()
   return "Ship, " + Object::toString();
 }
 
-Bullet::Bullet(SDL_FPoint position, float directionAngle, float speed, float maxSpeed)
-  : Object (position, 0, directionAngle, speed, maxSpeed, 0, 0, true) {
+Bullet::Bullet(SDL_FPoint position, float directionAngle, float speed/*, float maxSpeed*/)
+  : Object (position, 0, directionAngle, speed, 0, 1, 0, true) {
   std::vector<SDL_FPoint> points = {{2, 2}, {-2, 2}, {-2, -2}, {2, -2}};
   addPoints(points);
 }

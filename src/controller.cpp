@@ -24,7 +24,10 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
       //std::cout << std::hex << e.type << " " << e.key.keysym.sym << std::endl;
       switch (e.key.keysym.sym) {
         case SDLK_UP:
-          if (ship.getSpeed() < ship.getMaxSpeed() / 2) {
+          ship.setDirectionAngle(ship.getRotationAngle());
+          ship.setAccelerationForce(200);
+
+          /*if (ship.getSpeed() < ship.getMaxSpeed() / 2) {
             ship.setDirectionAngle(ship.getRotationAngle());
             ship.setSpeed(ship.getMaxSpeed() / 2);
             speedUpTimeout = currentTime + 1500;
@@ -32,20 +35,20 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
           else if (currentTime >= speedUpTimeout) {
             if (ship.getSpeed() < ship.getMaxSpeed())
               ship.setSpeed(ship.getMaxSpeed());
-          }
+          }*/
           break;
 
         case SDLK_DOWN:
           break;
 
         case SDLK_LEFT:
-          //ship.setRotationSpeed(ship.getRotationSpeed() - 45);
-          ship.setRotationSpeed(-ship.getMaxRotationSpeed());
+          ship.setRotationSpeed(-90);
+          //ship.setRotationSpeed(-ship.getMaxRotationSpeed());
           break;
 
         case SDLK_RIGHT:
-          //ship.setRotationSpeed(ship.getRotationSpeed() + 45);
-          ship.setRotationSpeed(ship.getMaxRotationSpeed());
+          ship.setRotationSpeed(90);
+          //ship.setRotationSpeed(ship.getMaxRotationSpeed());
           break;
 
         case SDLK_SPACE:
@@ -56,8 +59,9 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
     else if (e.type == SDL_KEYUP) {
       switch (e.key.keysym.sym) {
         case SDLK_UP:
-          doSpeedDw = true;
-          speedDwTimeout = currentTime + 1000;
+          ship.setAccelerationForce(0);
+          //doSpeedDw = true;
+          //speedDwTimeout = currentTime + 1000;
           break;
         case SDLK_LEFT:
         case SDLK_RIGHT:
@@ -70,24 +74,12 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
     }
   }
 
-  if (doSpeedDw && currentTime > speedDwTimeout) {
+  /*  if (doSpeedDw && currentTime > speedDwTimeout) {
     ship.setSpeed(ship.getSpeed() - 5);
     if (ship.getSpeed() == 0)
       doSpeedDw = false;
-  }
-
-/*  if (!keyPressed) {
-    if (ship.getRotationSpeed() > 0) {
-      ship.setRotationSpeed(ship.getRotationSpeed() - 45);
-      if (ship.getRotationSpeed() < 0)
-        ship.setRotationSpeed(0);
-    }
-    else if (ship.getRotationSpeed() < 0) {
-      ship.setRotationSpeed(ship.getRotationSpeed() + 45);
-      if (ship.getRotationSpeed() > 0)
-        ship.setRotationSpeed(0);
-    }
   }*/
-  //std::cout << ship.getSpeed() << std::endl;
+
+  std::cout << ship.getSpeed() << " " << ship.getDirectionAngle() << " " << ship.getRotationAngle() << std::endl;
   //std::cout << ship.getRotationSpeed() << std::endl;
 }

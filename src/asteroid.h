@@ -11,8 +11,9 @@
 class Asteroid: public Object {
 public:
   Asteroid(SDL_FPoint position, float directionAngle,
-           float speed, float maxSpeed, float rotationSpeed, float maxRotationSpeed);
+           float speed, /*float maxSpeed,*/ float rotationSpeed/*, float maxRotationSpeed*/);
 
+  void setDirectionAngle(float newDirectionAngle);
   void setGeneration(int newGeneration) { generation = newGeneration; }
   [[nodiscard]] int getGeneration() const { return generation; }
 
@@ -24,15 +25,16 @@ private:
 
 class Ship: public Object {
 public:
-  Ship(SDL_FPoint position, float directionAngle, float speed, float maxSpeed, float rotationSpeed, float maxRotationSpeed);
-  Ship() : Ship({0, 0}, 0, 0, 0, 0, 0) {}
+  Ship(SDL_FPoint position, float directionAngle, float speed, /*float maxSpeed,*/ float rotationSpeed/*, float maxRotationSpeed*/,
+       float mass, float frictionFactor);
+  Ship() : Ship({0, 0}, 0, 0, 0, 1, 1) {}
   std::string toString() override;
 private:
 };
 
 class Bullet: public Object {
 public:
-  Bullet(SDL_FPoint position, float directionAngle, float speed, float maxSpeed);
+  Bullet(SDL_FPoint position, float directionAngle, float speed/*, float maxSpeed*/);
   std::string toString() override;
 };
 

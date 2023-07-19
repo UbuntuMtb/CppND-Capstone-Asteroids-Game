@@ -6,13 +6,13 @@ Game::Game(std::size_t screen_width, std::size_t screen_height, float maxSpeed)
     : screen_width(screen_width), screen_height(screen_height), maxSpeed(maxSpeed),
       engine(dev()), randomDirectionAngle(0, 360)
  {
-  objects.emplace_back(new Asteroid({500, 220}, -135, 50, maxSpeed, 90, 90));
-  objects.emplace_back(new Asteroid({500, 320}, 135, 50, maxSpeed, 90, 90));
-  objects.emplace_back(new Asteroid({300, 200}, 45, 60, maxSpeed, 90, 90));
-  objects.emplace_back(new Asteroid({200, 400}, 180, 60, maxSpeed, 90, 90));
+  objects.emplace_back(new Asteroid({500, 220}, -135, 50, 90));
+  objects.emplace_back(new Asteroid({500, 320}, 135, 50, 90));
+  objects.emplace_back(new Asteroid({300, 200}, 45, 60, 90));
+  objects.emplace_back(new Asteroid({200, 400}, 180, 60, 90));
 
   centerPoint = {(float) screen_width/2, (float) screen_height/2};
-  pShip = new Ship(centerPoint, 0.0, 0, maxSpeed, 0, 180);
+  pShip = new Ship(centerPoint, -90.0, 0, 0, 1, 0.5);
   objects.emplace_back(pShip);
 }
 
@@ -77,7 +77,7 @@ void Game::Update(float secs_per_frame, bool &fire)
 {
   for (auto &pObject: objects) {
     if (!pObject->isVisible())
-      pObject->wrapAround();
+       pObject->wrapAround();
     pObject->move(secs_per_frame);
   }
 
@@ -104,8 +104,10 @@ void Game::Update(float secs_per_frame, bool &fire)
               pAsteroid->setGeneration(pAsteroid->getGeneration() + 1);
               pAsteroid->resize(0.75);
               pAsteroid->setDirectionAngle(pAsteroid->getDirectionAngle() + 90);
+              //pAsteroid->setSpeed(pAsteroid->getSpeed());
               auto pNewAsteroid = new Asteroid(*pAsteroid);
               pNewAsteroid->setDirectionAngle(pNewAsteroid->getDirectionAngle() + 180);
+              //pNewAsteroid->setSpeed(pNewAsteroid->getSpeed());
               objects.emplace_back(pNewAsteroid);
             }
             break;
@@ -130,7 +132,7 @@ void Game::Update(float secs_per_frame, bool &fire)
   }
 
   if (fire) {
-    auto *pBullet = new Bullet(pShip->getPosition(), pShip->getRotationAngle(), 2 * maxSpeed, 2 * maxSpeed);
+    auto *pBullet = new Bullet(pShip->getPosition(), pShip->getRotationAngle(), 2 * maxSpeed);
     objects.emplace_back(pBullet);
   }
 
