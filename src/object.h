@@ -38,7 +38,7 @@ public:
 
   void setPosition(SDL_FPoint newPosition) { position = newPosition; }
   void setRotationAngle(float newRotationAngle);
-  virtual void setDirectionAngle(float directionAngle);
+  void setDirectionAngle(float directionAngle);
   void setSpeed(float newSpeed);
   void setRotationSpeed(float newRotationSpeed);
   void setDestroyed(bool newDestroyed) { destroyed = newDestroyed; }
@@ -68,11 +68,13 @@ public:
   static float wrapAngle(float angle);
   virtual std::string toString();
 
+protected:
+  static Sine sine;
+  static Cosine cosine;
+
 private:
   static float screenWidth;
   static float screenHeight;
-  static Sine sine;
-  static Cosine cosine;
 
   SDL_FPoint position;
   float rotationAngle{0};

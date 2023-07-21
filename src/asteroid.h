@@ -10,9 +10,8 @@
 
 class Asteroid: public Object {
 public:
-  Asteroid(SDL_FPoint position, float directionAngle, float speed, float rotationSpeed);
-
-  void setDirectionAngle(float newDirectionAngle) override;
+  Asteroid(SDL_FPoint position, float directionAngle, float speed, float rotationSpeed,
+           std::mt19937 engine);
   void setGeneration(int newGeneration) { generation = newGeneration; }
   [[nodiscard]] int getGeneration() const { return generation; }
 

@@ -2,16 +2,25 @@
 #include <iostream>
 #include "SDL.h"
 
-Game::Game(std::size_t screen_width, std::size_t screen_height, float maxSpeed)
-    : screen_width(screen_width), screen_height(screen_height), maxSpeed(maxSpeed),
-      engine(dev()), randomDirectionAngle(0, 360)
+Game::Game(std::size_t screen_width, std::size_t screen_height, float maxSpeed, int asteroidCount)
+    : screen_width(screen_width), screen_height(screen_height),
+      maxSpeed(maxSpeed),
+      asteroidCount(asteroidCount),
+      engine(dev()),
+      randDirection(-180, 180),
+      randSpeed((int) maxSpeed / 4, (int) maxSpeed),
+      randX(0, (int) screen_width),
+      randY(0, (int) screen_height),
+      randRotationSpeed(-90, 90)
  {
-  objects.emplace_back(new Asteroid({500, 220}, -135, 50, 90));
-  objects.emplace_back(new Asteroid({500, 320}, 135, 50, 90));
-  objects.emplace_back(new Asteroid({300, 200}, 45, 60, 90));
-  objects.emplace_back(new Asteroid({200, 400}, 180, 60, 90));
+  for (int i = 0; i < asteroidCount; i++) {
+    SDL_FPoint position = {(float) randX(engine), (float) randY(engine)};
+    auto pAsteroid = new Asteroid(position, (float) randDirection(engine), (float) randSpeed(engine),
+                                  (float) randRotationSpeed(engine), engine);
+    objects.emplace_back(pAsteroid);
+  }
 
-  centerPoint = {(float) screen_width/2, (float) screen_height/2};
+  centerPoint = {(float) screen_width / 2, (float) screen_height / 2};
   pShip = new Ship(centerPoint, -90.0, 0, 0, 1, 0.5);
   objects.emplace_back(pShip);
 }
@@ -58,21 +67,6 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   }
 }
 
-/*void Game::PlaceFood() {
-  int x, y;
-  while (true) {
-    x = random_w(engine);
-    y = random_h(engine);
-    // Check that the location is not occupied by a snake item before placing
-    // food.
-    if (!snake.SnakeCell(x, y)) {
-      food.x = x;
-      food.y = y;
-      return;
-    }
-  }
-}*/
-
 void Game::Update(float secs_per_frame, bool &fire)
 {
   for (auto &pObject: objects) {
@@ -89,9 +83,9 @@ void Game::Update(float secs_per_frame, bool &fire)
         auto pAsteroid = dynamic_cast<Asteroid*>(pObject2.get());
         if (pAsteroid != nullptr)
         {
-          //if (pAsteroid->isInside(pBullet->getPosition())) {
           if (pBullet->collision(*pAsteroid)) {
             pBullet->setDestroyed(true);
+
             if (pAsteroid->getGeneration() == 3) {
               pAsteroid->setDestroyed(true);
               switch (pAsteroid->getGeneration()){
@@ -103,9 +97,12 @@ void Game::Update(float secs_per_frame, bool &fire)
             else {
               pAsteroid->setGeneration(pAsteroid->getGeneration() + 1);
               pAsteroid->resize(0.75);
-              pAsteroid->setDirectionAngle(pAsteroid->getDirectionAngle() + 90);
+              pAsteroid->setDirectionAngle(pAsteroid->getDirectionAngle() + (float) randDirection(engine) / 2);
+              pAsteroid->setSpeed((float) randSpeed(engine));
+
               auto pNewAsteroid = new Asteroid(*pAsteroid);
-              pNewAsteroid->setDirectionAngle(pNewAsteroid->getDirectionAngle() + 180);
+              pNewAsteroid->setDirectionAngle(pAsteroid->getDirectionAngle() + (float) randDirection(engine) / 2);
+              pNewAsteroid->setSpeed((float) randSpeed(engine));
               objects.emplace_back(pNewAsteroid);
             }
             break;

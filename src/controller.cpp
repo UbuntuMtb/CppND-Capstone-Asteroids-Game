@@ -32,11 +32,11 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
           break;
 
         case SDLK_LEFT:
-          ship.setRotationSpeed(-90);
+          ship.setRotationSpeed(-180);
           break;
 
         case SDLK_RIGHT:
-          ship.setRotationSpeed(90);
+          ship.setRotationSpeed(180);
           break;
 
         case SDLK_SPACE:
