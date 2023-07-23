@@ -5,7 +5,7 @@
 
 class Controller {
  public:
-  void HandleInput(bool &running, Ship &ship, bool &fire) const;
+  void HandleInput(bool &running, Ship* pShip, bool &fire) const;
 
  private:
 };

@@ -31,7 +31,7 @@ private:
 class Object {
 public:
   Object(SDL_FPoint position, float rotationAngle, float directionAngle, float speed, float rotationSpeed,
-         float mass = 1, float frictionFactor = 1, bool checkDistanceTraveled = false);
+         float mass = 1, float frictionFactor = 1, float rotationFrictionFactor = 2, bool checkDistanceTraveled = false);
 
   static void setScreenDimensions(float width, float height);
   void addPoints(std::vector<SDL_FPoint> &pts);
@@ -43,6 +43,7 @@ public:
   void setRotationSpeed(float newRotationSpeed);
   void setDestroyed(bool newDestroyed) { destroyed = newDestroyed; }
   void setAccelerationForce(float newAccelerationForce) { accelerationForce = newAccelerationForce; }
+  void setRotationForce(float newRotationForce) { rotationForce = newRotationForce; }
 
   SDL_FPoint getPosition() const { return position; }
   float getRotationAngle() const { return rotationAngle; }
@@ -63,7 +64,9 @@ public:
 
   void rotatePoints();
   void translatePoints();
-  void move (float timeDelta);
+  void move(float timeDelta);
+  void translationMovement(float timeDelta);
+  void rotationalMovement(float timeDelta);
   void wrapAround();
   static float wrapAngle(float angle);
   virtual std::string toString();
@@ -90,6 +93,8 @@ private:
   float maxDistanceTraveled{0};
   bool destroyed{false};
   float rotationSpeed{0};
+  float rotationForce{0};
+  float rotationFrictionFactor{0};
 
   std::vector<SDL_FPoint> points;
   std::vector<SDL_FPoint> rotatedPts;

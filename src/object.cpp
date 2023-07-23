@@ -71,11 +71,11 @@ bool Line::intersect(const Line& line) const
 }
 
 Object::Object(SDL_FPoint position, float rotationAngle, float directionAngle,
-               float speed, /*float maxSpeed,*/ float rotationSpeed, /*float maxRotationSpeed,*/
-               float mass, float frictionFactor,
+               float speed, float rotationSpeed,
+               float mass, float frictionFactor, float rotationFrictionFactor,
                bool checkDistanceTraveled)
-  : position(position), /*maxSpeed(maxSpeed),*/ rotationSpeed(rotationSpeed), /*maxRotationSpeed(maxRotationSpeed),*/
-    mass(mass), frictionFactor(frictionFactor),
+  : position(position), rotationSpeed(rotationSpeed),
+    mass(mass), frictionFactor(frictionFactor), rotationFrictionFactor(rotationFrictionFactor),
     checkDistanceTraveled(checkDistanceTraveled)
 {
   //if (maxSpeed < 0.0)
@@ -214,15 +214,27 @@ void Object::translatePoints()
 
 void Object::move(float timeDelta)
 {
-  float newRotationAngle = getRotationAngle() + getRotationSpeed() * timeDelta;
-  setRotationAngle(newRotationAngle);
+  //float newRotationAngle = getRotationAngle() + getRotationSpeed() * timeDelta;
+  //setRotationAngle(newRotationAngle);
+  rotationalMovement(timeDelta);
+  translationMovement(timeDelta);
+  translatePoints();
 
-  float xFriction = frictionFactor * xSpeed;
-  float yFriction = frictionFactor * ySpeed;
+  if (checkDistanceTraveled) {
+    distanceTraveled += speed * timeDelta;
+    if (distanceTraveled > maxDistanceTraveled)
+      destroyed = true;
+  }
+}
+
+void Object::translationMovement(float timeDelta)
+{
+  float xFrictionForce = frictionFactor * xSpeed;
+  float yFrictionForce = frictionFactor * ySpeed;
   float xAccForce = accelerationForce * cosine(directionAngle);
   float yAccForce = accelerationForce * sine(directionAngle);
-  float xNetForce = xAccForce - xFriction;
-  float yNetForce = yAccForce - yFriction;
+  float xNetForce = xAccForce - xFrictionForce;
+  float yNetForce = yAccForce - yFrictionForce;
   float xAccel = xNetForce / mass;
   float yAccel = yNetForce / mass;
 
@@ -236,13 +248,20 @@ void Object::move(float timeDelta)
     xSpeed = 0;
     ySpeed = 0;
   }
+}
 
-  translatePoints();
-  if (checkDistanceTraveled) {
-    distanceTraveled += speed * timeDelta;
-    if (distanceTraveled > maxDistanceTraveled)
-      destroyed = true;
-  }
+void Object::rotationalMovement(float timeDelta)
+{
+  float rotationFrictionForce = rotationFrictionFactor * rotationSpeed;
+  float netRotationForce = rotationForce - rotationFrictionForce;
+  float angularAcceleration = netRotationForce / mass;
+
+  float newRotationAngle = getRotationAngle() + getRotationSpeed() * timeDelta + angularAcceleration * timeDelta * timeDelta / 2;
+  setRotationAngle(newRotationAngle);
+  setRotationSpeed(getRotationSpeed() + angularAcceleration * timeDelta);
+
+  if (-10 < getRotationSpeed() && getRotationSpeed() < 10 && rotationForce == 0)
+    setRotationSpeed(0);
 }
 
 void Object::wrapAround() {

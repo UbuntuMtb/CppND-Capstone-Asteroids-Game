@@ -32,10 +32,13 @@ class Game {
 
   Ship *pShip{nullptr};
   std::vector<std::unique_ptr<Object>> objects;
+  std::vector<Asteroid*> asteroids;
   float maxSpeed;
   int asteroidCount;
+  int level = 1;
 
   void Update(float secs_per_frame, bool &fire);
+  void CreateAsteroids(int count);
 };
 
 #endif

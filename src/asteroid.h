@@ -24,8 +24,8 @@ private:
 class Ship: public Object {
 public:
   Ship(SDL_FPoint position, float directionAngle, float speed, float rotationSpeed,
-       float mass, float frictionFactor);
-  Ship() : Ship({0, 0}, 0, 0, 0, 1, 1) {}
+       float mass, float frictionFactor, float rotationFrictionFactor);
+  Ship() : Ship({0, 0}, 0, 0, 0, 1, 1, 1) {}
   std::string toString() override;
 private:
 };

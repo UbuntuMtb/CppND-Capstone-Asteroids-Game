@@ -12,7 +12,7 @@ class Renderer {
   ~Renderer();
 
   void Render(std::vector<std::unique_ptr<Object>> &objects);
-  void UpdateWindowTitle(int lives, int score, int fps);
+  void UpdateWindowTitle(int level, int lives, int score, int fps);
 
  private:
   SDL_Window *sdl_window;

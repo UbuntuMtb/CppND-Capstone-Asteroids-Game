@@ -56,7 +56,7 @@ void Renderer::Render(std::vector<std::unique_ptr<Object>> &objects) {
   SDL_RenderPresent(sdl_renderer);
 }
 
-void Renderer::UpdateWindowTitle(int lives, int score, int fps) {
-  std::string title{"Asteroids " + std::string(lives, 'A') + " Score: " + std::to_string(score) + " FPS: " + std::to_string(fps)};
+void Renderer::UpdateWindowTitle(int level, int lives, int score, int fps) {
+  std::string title{"Asteroids - Level: " + std::to_string(level) + " Lives: " + std::string(lives, 'A') + " Score: " + std::to_string(score) + " FPS: " + std::to_string(fps)};
   SDL_SetWindowTitle(sdl_window, title.c_str());
 }

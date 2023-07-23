@@ -1,8 +1,9 @@
 #include "controller.h"
 #include <iostream>
+#include <iomanip>
 #include "SDL.h"
 
-void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
+void Controller::HandleInput(bool &running, Ship *pShip, bool &fire) const {
   SDL_Event e;
   bool keyPressed = false;
   static Uint32 currentTime;
@@ -24,19 +25,25 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
       //std::cout << std::hex << e.type << " " << e.key.keysym.sym << std::endl;
       switch (e.key.keysym.sym) {
         case SDLK_UP:
-          ship.setDirectionAngle(ship.getRotationAngle());
-          ship.setAccelerationForce(200);
+          if (pShip) {
+            pShip->setDirectionAngle(pShip->getRotationAngle());
+            pShip->setAccelerationForce(200);
+          }
           break;
 
         case SDLK_DOWN:
           break;
 
         case SDLK_LEFT:
-          ship.setRotationSpeed(-180);
+          if (pShip)
+            pShip->setRotationForce(-720);
+            //pShip->setRotationSpeed(-180);
           break;
 
         case SDLK_RIGHT:
-          ship.setRotationSpeed(180);
+          if (pShip)
+            pShip->setRotationForce(720);
+            //pShip->setRotationSpeed(180);
           break;
 
         case SDLK_SPACE:
@@ -47,11 +54,14 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
     else if (e.type == SDL_KEYUP) {
       switch (e.key.keysym.sym) {
         case SDLK_UP:
-          ship.setAccelerationForce(0);
+          if (pShip)
+            pShip->setAccelerationForce(0);
           break;
         case SDLK_LEFT:
         case SDLK_RIGHT:
-          ship.setRotationSpeed(0);
+          if (pShip)
+            pShip->setRotationForce(0);
+            //pShip->setRotationSpeed(0);
           break;
       }
     }
@@ -60,6 +70,10 @@ void Controller::HandleInput(bool &running, Ship &ship, bool &fire) const {
     }
   }
 
-  std::cout << ship.getSpeed() << " " << ship.getDirectionAngle() << " " << ship.getRotationAngle() << std::endl;
-  //std::cout << ship.getRotationSpeed() << std::endl;
+  if (pShip)
+    std::cout << std::fixed << std::setprecision(1) << std::setfill(' ')
+    << std::setw(6) << pShip->getSpeed() << " "
+    << std::setw(6) << pShip->getDirectionAngle() << " "
+    << std::setw(6) << pShip->getRotationAngle() << " "
+    << std::setw(6) << pShip->getRotationSpeed() << std::endl;
 }

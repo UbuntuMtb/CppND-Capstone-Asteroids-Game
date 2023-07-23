@@ -1,5 +1,6 @@
 #include "game.h"
 #include <iostream>
+#include <algorithm>
 #include "SDL.h"
 
 Game::Game(std::size_t screen_width, std::size_t screen_height, float maxSpeed, int asteroidCount)
@@ -13,15 +14,9 @@ Game::Game(std::size_t screen_width, std::size_t screen_height, float maxSpeed, 
       randY(0, (int) screen_height),
       randRotationSpeed(-90, 90)
  {
-  for (int i = 0; i < asteroidCount; i++) {
-    SDL_FPoint position = {(float) randX(engine), (float) randY(engine)};
-    auto pAsteroid = new Asteroid(position, (float) randDirection(engine), (float) randSpeed(engine),
-                                  (float) randRotationSpeed(engine), engine);
-    objects.emplace_back(pAsteroid);
-  }
-
+  CreateAsteroids(asteroidCount);
   centerPoint = {(float) screen_width / 2, (float) screen_height / 2};
-  pShip = new Ship(centerPoint, -90.0, 0, 0, 1, 0.5);
+  pShip = new Ship(centerPoint, -90.0, 0, 0, 1, 0.5, 4);
   objects.emplace_back(pShip);
 }
 
@@ -40,7 +35,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(running, *pShip, fire);
+    controller.HandleInput(running, pShip, fire);
     Update(secs_per_frame, fire);
     renderer.Render(objects);
 
@@ -53,7 +48,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
     // After every second, update the window title.
     if (frame_end - title_timestamp >= 1000) {
-      renderer.UpdateWindowTitle(lives, score, frame_count);
+      renderer.UpdateWindowTitle(level, lives, score, frame_count);
       frame_count = 0;
       title_timestamp = frame_end;
     }
@@ -69,12 +64,14 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
 void Game::Update(float secs_per_frame, bool &fire)
 {
+  // Move objects
   for (auto &pObject: objects) {
     if (!pObject->isVisible())
        pObject->wrapAround();
     pObject->move(secs_per_frame);
   }
 
+  // Bullets hitting asteroids
   for (auto &pObject: objects) {
     auto pBullet = dynamic_cast<Bullet*>(pObject.get());
     if (pBullet != nullptr && !pBullet->getDestroyed())
@@ -97,13 +94,15 @@ void Game::Update(float secs_per_frame, bool &fire)
             else {
               pAsteroid->setGeneration(pAsteroid->getGeneration() + 1);
               pAsteroid->resize(0.75);
-              pAsteroid->setDirectionAngle(pAsteroid->getDirectionAngle() + (float) randDirection(engine) / 2);
+              auto angleChange = (float) randDirection(engine) / 2;
+              pAsteroid->setDirectionAngle(pAsteroid->getDirectionAngle() + angleChange);
               pAsteroid->setSpeed((float) randSpeed(engine));
 
               auto pNewAsteroid = new Asteroid(*pAsteroid);
-              pNewAsteroid->setDirectionAngle(pAsteroid->getDirectionAngle() + (float) randDirection(engine) / 2);
+              pNewAsteroid->setDirectionAngle(pAsteroid->getDirectionAngle() - angleChange);
               pNewAsteroid->setSpeed((float) randSpeed(engine));
               objects.emplace_back(pNewAsteroid);
+              asteroids.emplace_back(pNewAsteroid);
             }
             break;
           }
@@ -112,6 +111,7 @@ void Game::Update(float secs_per_frame, bool &fire)
     }
   }
 
+  // Asteroids hitting the ship
   for (auto &pObject: objects) {
     auto pAsteroid = dynamic_cast<Asteroid*>(pObject.get());
     if (pAsteroid != nullptr)
@@ -126,20 +126,46 @@ void Game::Update(float secs_per_frame, bool &fire)
     }
   }
 
+  // Fire bullets
   if (fire) {
     auto *pBullet = new Bullet(pShip->getPosition(), pShip->getRotationAngle(), 2 * maxSpeed);
     objects.emplace_back(pBullet);
   }
 
+  // Remove destroyed objects
   for (auto it = objects.begin(); it != objects.end();) {
     auto &pObject = *it;
     if (pObject->getDestroyed()) {
-      auto ptrShip = dynamic_cast<Ship *>(pObject.get());
+      auto ptrShip = dynamic_cast<Ship*>(pObject.get());
+      auto ptrAsteroid = dynamic_cast<Asteroid*>(pObject.get());
+
       if (ptrShip != nullptr)
         pShip = nullptr;
+      else if (ptrAsteroid != nullptr) {
+        auto it2 = std::find(asteroids.begin(), asteroids.end(), ptrAsteroid);
+        if (it2 != asteroids.end())
+          asteroids.erase(it2);
+      }
       it = objects.erase(it);
     }
     else
       ++it;
   }
+
+  if (asteroids.empty()) {
+    level++;
+    asteroidCount++;
+    CreateAsteroids(asteroidCount);
+  }
+}
+
+void Game::CreateAsteroids(int count) {
+  for (int i = 0; i < count; i++) {
+    SDL_FPoint position = {(float) randX(engine), (float) randY(engine)};
+    auto pAsteroid = new Asteroid(position, (float) randDirection(engine), (float) randSpeed(engine),
+                                  (float) randRotationSpeed(engine), engine);
+    objects.emplace_back(pAsteroid);
+    asteroids.emplace_back(pAsteroid);
+  }
+
 }

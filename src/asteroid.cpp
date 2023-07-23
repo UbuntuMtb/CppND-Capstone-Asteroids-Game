@@ -7,7 +7,7 @@
 Asteroid::Asteroid(SDL_FPoint position, float directionAngle,
                    float speed, float rotationSpeed,
                    std::mt19937 engine)
-  : Object(position, 0, directionAngle, speed, rotationSpeed, 1, 0, false)
+  : Object(position, 0, directionAngle, speed, rotationSpeed, 1, 0, 0, false)
 {
   std::vector<SDL_FPoint> points;
   std::uniform_int_distribution<int> randR(15, 50);
@@ -33,8 +33,8 @@ void Asteroid::resize(float factor)
 
 Ship::Ship(SDL_FPoint position, float directionAngle,
            float speed, float rotationSpeed,
-           float mass, float frictionFactor)
-  : Object(position, directionAngle, directionAngle, speed, rotationSpeed, mass, frictionFactor)
+           float mass, float frictionFactor, float rotationFrictionFactor)
+  : Object(position, directionAngle, directionAngle, speed, rotationSpeed, mass, frictionFactor, rotationFrictionFactor)
 {
   std::vector<SDL_FPoint> points = {{15, 0}, {-15, 10}, {-15, -10}};
   addPoints(points);
@@ -46,7 +46,7 @@ std::string Ship::toString()
 }
 
 Bullet::Bullet(SDL_FPoint position, float directionAngle, float speed)
-  : Object (position, 0, directionAngle, speed, 0, 1, 0, true) {
+  : Object (position, 0, directionAngle, speed, 0, 1, 0, 0, true) {
   std::vector<SDL_FPoint> points = {{2, 2}, {-2, 2}, {-2, -2}, {2, -2}};
   addPoints(points);
 }
