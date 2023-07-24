@@ -2,10 +2,7 @@
 #include <iostream>
 #include <string>
 
-Renderer::Renderer(std::size_t screen_width,
-                   std::size_t screen_height)
-    : screen_width(screen_width),
-      screen_height(screen_height) {
+Renderer::Renderer(std::size_t screen_width, std::size_t screen_height) {
   // Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cerr << "SDL could not initialize.\n";
@@ -54,6 +51,7 @@ void Renderer::Render(std::vector<std::unique_ptr<Object>> &objects) {
           flash = !flash;
           flashTimeout = SDL_GetTicks() + 250;
         }
+        // Flash ship
         if (flash)
           SDL_SetRenderDrawColor(sdl_renderer, 0x33, 0xFF, 0xFF, 0xFF);
         else

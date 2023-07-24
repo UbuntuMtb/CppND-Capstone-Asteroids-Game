@@ -1,7 +1,6 @@
 //
 // Created by rene on 12/06/23.
 //
-
 #include "object.h"
 #include <stdexcept>
 
@@ -234,6 +233,7 @@ void Object::move(float timeDelta)
   }
 }
 
+// Uniformly accelerated particle movement calculations
 void Object::translationMovement(float timeDelta)
 {
   float xFrictionForce = frictionFactor * xSpeed;
@@ -257,6 +257,7 @@ void Object::translationMovement(float timeDelta)
   }
 }
 
+// Uniformly accelerated particle rotation calculations
 void Object::rotationalMovement(float timeDelta)
 {
   float rotationFrictionForce = rotationFrictionFactor * rotationSpeed;

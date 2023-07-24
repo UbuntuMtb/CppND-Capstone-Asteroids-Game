@@ -26,8 +26,8 @@ class Game {
 
   int score{0};
   int lives{3};
-  const std::size_t screen_width;
-  const std::size_t screen_height;
+  //const std::size_t screen_width;
+  //const std::size_t screen_height;
   SDL_FPoint centerPoint{0,0};
 
   Ship *pShip{nullptr};

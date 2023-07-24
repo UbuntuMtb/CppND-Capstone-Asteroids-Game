@@ -1,7 +1,6 @@
 //
 // Created by rene on 26/06/23.
 //
-
 #include "SDL.h"
 #include "asteroid.h"
 #include <iostream>
@@ -58,7 +57,7 @@ void Ship::setGhost(bool newGhost)
   ghost = newGhost;
   if (ghost)
     ghostTimeout = SDL_GetTicks() + 4000;
-  //std::cout << "Ghost:" << ghost << std::endl;
+  // std::cout << "Ghost:" << ghost << std::endl;
 }
 
 void Ship::move(float timeDelta)

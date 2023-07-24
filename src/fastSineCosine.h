@@ -1,8 +1,8 @@
 //
 // Created by rene on 7/07/23.
 //
-#ifndef FASTSINECOSINE_H
-#define FASTSINECOSINE_H
+#ifndef FAST_SINE_COSINE_H
+#define FAST_SINE_COSINE_H
 
 class Sine {
 public:
@@ -20,6 +20,4 @@ private:
   float values[360];
 };
 
-
-
-#endif //FASTSINECOSINE_H
+#endif //FAST_SINE_COSINE_H

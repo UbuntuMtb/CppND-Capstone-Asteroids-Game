@@ -5,7 +5,7 @@
 #include "SDL.h"
 
 Game::Game(std::size_t screen_width, std::size_t screen_height, float maxSpeed, int asteroidCount)
-    : screen_width(screen_width), screen_height(screen_height),
+    : /*screen_width(screen_width), screen_height(screen_height),*/
       maxSpeed(maxSpeed),
       asteroidCount(asteroidCount),
       engine(dev()),
