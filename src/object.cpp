@@ -42,7 +42,7 @@ Line::PointsOrientation Line::orientation(const SDL_FPoint& r) const
 }
 
 //
-// Based o n https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
+// Based on https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
 //
 bool Line::intersect(const Line& line) const
 {
@@ -234,6 +234,8 @@ void Object::move(float timeDelta)
 }
 
 // Uniformly accelerated particle movement calculations
+// https://www.profesorenlinea.cl/fisica/Movimiento_rectilineo_acelerado.html
+// https://www.toptal.com/game/video-game-physics-part-i-an-introduction-to-rigid-body-dynamics
 void Object::translationMovement(float timeDelta)
 {
   float xFrictionForce = frictionFactor * xSpeed;
@@ -258,6 +260,7 @@ void Object::translationMovement(float timeDelta)
 }
 
 // Uniformly accelerated particle rotation calculations
+// http://19e37.com/wiki/index.php/Movimiento_Circular_Uniformemente_Acelerado_-_MCUA
 void Object::rotationalMovement(float timeDelta)
 {
   float rotationFrictionForce = rotationFrictionFactor * rotationSpeed;
