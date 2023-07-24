@@ -40,9 +40,35 @@ void Renderer::Render(std::vector<std::unique_ptr<Object>> &objects) {
   SDL_SetRenderDrawColor(sdl_renderer, 0x1E, 0x1E, 0x1E, 0xFF);
   SDL_RenderClear(sdl_renderer);
 
-  // Render asteroid objects
+  // Render objects
   for (auto &pObject: objects) {
-    SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    auto pShip = dynamic_cast<Ship*>(pObject.get());
+    auto pASteroid = dynamic_cast<Asteroid*>(pObject.get());
+    auto pBullet = dynamic_cast<Bullet*>(pObject.get());
+    auto pDust = dynamic_cast<Dust*>(pObject.get());
+
+    if (pShip)
+    {
+      if (pShip->getGhost()) {
+        if (SDL_GetTicks() > flashTimeout) {
+          flash = !flash;
+          flashTimeout = SDL_GetTicks() + 250;
+        }
+        if (flash)
+          SDL_SetRenderDrawColor(sdl_renderer, 0x33, 0xFF, 0xFF, 0xFF);
+        else
+          SDL_SetRenderDrawColor(sdl_renderer, 0x19, 0x77, 0x77, 0xFF);
+      }
+      else
+        SDL_SetRenderDrawColor(sdl_renderer, 0x33, 0xFF, 0xFF, 0xFF);
+    }
+    else if (pASteroid)
+      SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xCC, 0x99, 0xFF);
+    else if (pBullet)
+      SDL_SetRenderDrawColor(sdl_renderer, 0x33, 0xFF, 0xFF, 0xFF);
+    else if (pDust)
+      SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
     auto &points = pObject->getTranslatedPoints();
 
     for (int i = 0; i < points.size(); i++) {
@@ -57,6 +83,8 @@ void Renderer::Render(std::vector<std::unique_ptr<Object>> &objects) {
 }
 
 void Renderer::UpdateWindowTitle(int level, int lives, int score, int fps) {
-  std::string title{"Asteroids - Level: " + std::to_string(level) + " Lives: " + std::string(lives, 'A') + " Score: " + std::to_string(score) + " FPS: " + std::to_string(fps)};
+  std::string title{"Asteroids Level: " + std::to_string(level) + " Lives: "};
+  title += lives > 0 ? std::string(lives, 'A') : "Game Over!";
+  title += " Score: " + std::to_string(score) + " FPS: " + std::to_string(fps);
   SDL_SetWindowTitle(sdl_window, title.c_str());
 }

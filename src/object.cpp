@@ -97,9 +97,9 @@ void Object::setScreenDimensions(float width, float height)
 
 void Object::addPoints(std::vector<SDL_FPoint> &pts)
 {
-  points = pts;
-  rotatedPts.resize(points.size());
-  translatedPts.resize(points.size());
+  rawPoints = pts;
+  rotatedPts.resize(rawPoints.size());
+  translatedPts.resize(rawPoints.size());
   //translatedPtsI.resize(points.size());
   rotatePoints();
   translatePoints();
@@ -131,8 +131,9 @@ void Object::setSpeed(float newSpeed)
   else
     speed = newSpeed;
 
-  xSpeed = speed * cosine(directionAngle);
-  ySpeed = speed * sine(directionAngle);
+  //xSpeed = speed * cosine(directionAngle);
+  //ySpeed = speed * sine(directionAngle);
+  setSpeed();
 }
 
 void Object::setRotationSpeed(float newRotationSpeed)
@@ -140,6 +141,12 @@ void Object::setRotationSpeed(float newRotationSpeed)
   if (newRotationSpeed == rotationSpeed)
     return;
   rotationSpeed = newRotationSpeed;
+}
+
+void Object::setSpeed()
+{
+  xSpeed = speed * cosine(directionAngle);
+  ySpeed = speed * sine(directionAngle);
 }
 
 //
@@ -198,8 +205,8 @@ void Object::rotatePoints()
   float cosA = cosine(rotationAngle);
   float sinA = sine(rotationAngle);
 
-  for (int i = 0; i < points.size(); i++) {
-    SDL_FPoint &pt = points[i];
+  for (int i = 0; i < rawPoints.size(); i++) {
+    SDL_FPoint &pt = rawPoints[i];
     rotatedPts[i] = {pt.x * cosA - pt.y * sinA, pt.x * sinA + pt.y * cosA};
   }
 }

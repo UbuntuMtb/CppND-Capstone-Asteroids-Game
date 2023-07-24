@@ -5,18 +5,10 @@
 
 void Controller::HandleInput(bool &running, Ship *pShip, bool &fire) const {
   SDL_Event e;
-  bool keyPressed = false;
-  static Uint32 currentTime;
-  static Uint32 speedUpTimeout;
-  static Uint32 speedDwTimeout;
-  static bool doSpeedDw = false;
-
   fire = false;
-  currentTime = SDL_GetTicks();
 
   while (SDL_PollEvent(&e))
   {
-    keyPressed = true;
     if (e.type == SDL_QUIT) {
       running = false;
       //std::cout << std::hex << e.type << std::endl;
@@ -70,10 +62,12 @@ void Controller::HandleInput(bool &running, Ship *pShip, bool &fire) const {
     }
   }
 
+/*
   if (pShip)
     std::cout << std::fixed << std::setprecision(1) << std::setfill(' ')
     << std::setw(6) << pShip->getSpeed() << " "
     << std::setw(6) << pShip->getDirectionAngle() << " "
     << std::setw(6) << pShip->getRotationAngle() << " "
     << std::setw(6) << pShip->getRotationSpeed() << std::endl;
+*/
 }

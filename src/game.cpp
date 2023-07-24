@@ -1,6 +1,7 @@
 #include "game.h"
 #include <iostream>
 #include <algorithm>
+#include <iomanip>
 #include "SDL.h"
 
 Game::Game(std::size_t screen_width, std::size_t screen_height, float maxSpeed, int asteroidCount)
@@ -64,6 +65,12 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
 void Game::Update(float secs_per_frame, bool &fire)
 {
+  // Fire bullets
+  if (pShip && fire) {
+    auto *pBullet = new Bullet(pShip->getPosition(), pShip->getRotationAngle(), 3 * maxSpeed);
+    objects.emplace_back(pBullet);
+  }
+
   // Move objects
   for (auto &pObject: objects) {
     if (!pObject->isVisible())
@@ -94,16 +101,30 @@ void Game::Update(float secs_per_frame, bool &fire)
             else {
               pAsteroid->setGeneration(pAsteroid->getGeneration() + 1);
               pAsteroid->resize(0.75);
-              auto angleChange = (float) randDirection(engine) / 2;
-              pAsteroid->setDirectionAngle(pAsteroid->getDirectionAngle() + angleChange);
+/*
+              std::cout << std::fixed << std::setprecision(1) << std::setfill(' ')
+                        << std::setw(6) << pBullet->getDirectionAngle() << " "
+                        << std::setw(6) << pAsteroid->getDirectionAngle() << " ";
+*/
+              auto angleChange = (pBullet->getDirectionAngle() - pAsteroid->getDirectionAngle()) / 6;
+              auto baseAngle = pAsteroid->getDirectionAngle();
+              pAsteroid->setDirectionAngle(baseAngle + angleChange);
               pAsteroid->setSpeed((float) randSpeed(engine));
-
+              //pAsteroid->setSpeed();
               auto pNewAsteroid = new Asteroid(*pAsteroid);
-              pNewAsteroid->setDirectionAngle(pAsteroid->getDirectionAngle() - angleChange);
+              pNewAsteroid->setDirectionAngle(baseAngle - angleChange);
               pNewAsteroid->setSpeed((float) randSpeed(engine));
+              //pNewAsteroid->setSpeed();
               objects.emplace_back(pNewAsteroid);
               asteroids.emplace_back(pNewAsteroid);
+/*
+              std::cout << std::setw(6) << angleChange << " "
+                        << std::setw(6) << pAsteroid->getDirectionAngle() << " "
+                        << std::setw(6) << pNewAsteroid->getDirectionAngle() << " " << std::endl;
+*/
             }
+            for (int i = 0; i < 3; i++)
+              objects.emplace_back(new Dust(pAsteroid->getPosition(), (float) randDirection(engine), maxSpeed));
             break;
           }
         }
@@ -112,25 +133,28 @@ void Game::Update(float secs_per_frame, bool &fire)
   }
 
   // Asteroids hitting the ship
-  for (auto &pObject: objects) {
-    auto pAsteroid = dynamic_cast<Asteroid*>(pObject.get());
-    if (pAsteroid != nullptr)
-    if (pShip->collision((*pAsteroid))) {
-      if (lives > 0) {
-        lives--;
-        pShip->setPosition(centerPoint);
-      } else {
-        pShip->setDestroyed(true);
-      }
-      break;
-    }
-  }
+  if (pShip && !pShip->getGhost())
+      for (auto &pObject: objects) {
+        auto pAsteroid = dynamic_cast<Asteroid*>(pObject.get());
+        if (pAsteroid != nullptr)
+        if (pShip->collision((*pAsteroid))) {
+          if (lives > 0) {
+            lives--;
+            if (lives > 0) {
+              pShip->setGhost(true);
+              pShip->setPosition(centerPoint);
+            } else
+              pShip->setDestroyed(true);
 
-  // Fire bullets
-  if (fire) {
-    auto *pBullet = new Bullet(pShip->getPosition(), pShip->getRotationAngle(), 2 * maxSpeed);
-    objects.emplace_back(pBullet);
-  }
+            for (int i = 0; i < 60; i++)
+              objects.emplace_back(new Dust(pAsteroid->getPosition(), (float) randDirection(engine), maxSpeed));
+          }
+          break;
+        }
+      }
+  //if (pShip)
+  //  std::cout << "Ship Ghost Mode: " << pShip->getGhost() << std::endl;
+
 
   // Remove destroyed objects
   for (auto it = objects.begin(); it != objects.end();) {
@@ -156,6 +180,7 @@ void Game::Update(float secs_per_frame, bool &fire)
     level++;
     asteroidCount++;
     CreateAsteroids(asteroidCount);
+    pShip->setGhost(true);
   }
 }
 

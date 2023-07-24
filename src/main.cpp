@@ -15,6 +15,7 @@ int main() {
   constexpr float kMaxSpeed{100};
   constexpr float kAsteroidsCount{4};
 
+/*
   SDL_FPoint p0 = {1, 1}, p1 = {10, 2};
   SDL_FPoint q0 = {1, 2,}, q1 = {10, 3};
   Line(p0, p1).intersect(Line(q0, q1)) ? std::cout << "Yes\n" : std::cout << "No\n";
@@ -29,7 +30,9 @@ int main() {
   Line(p0, p1).intersect(Line(q0, q1)) ? std::cout << "Yes\n" : std::cout << "No\n";
 
   std::vector<SDL_FPoint> points = {{0, 0}, {10, 0}, {10, 10}, {0, 10}};
+*/
   Object::setScreenDimensions(kScreenWidth, kScreenHeight);
+/*
   Object object({0, 0}, 0, 0, 0, 100, 0, 0);
   object.addPoints(points);
   SDL_FPoint point = {5, 5};
@@ -38,7 +41,7 @@ int main() {
     std::cout << "Point is inside.\n";
   else
     std::cout << "Point is outside.\n";
-
+*/
   Renderer renderer(kScreenWidth, kScreenHeight);
   Controller controller;
   Game game(kScreenWidth, kScreenHeight, kMaxSpeed, kAsteroidsCount);

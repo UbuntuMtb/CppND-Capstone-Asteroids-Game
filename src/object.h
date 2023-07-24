@@ -53,7 +53,7 @@ public:
   float getDistanceTraveled() const { return distanceTraveled; }
   bool getDestroyed() const { return destroyed; }
 
-  std::vector<SDL_FPoint > &getPoints() {return points; }
+  std::vector<SDL_FPoint > &getRawPoints() {return rawPoints; }
   const std::vector<SDL_FPoint> &getRotatedPoints() const { return rotatedPts; }
   const std::vector<SDL_FPoint> &getTranslatedPoints() const { return translatedPts; }
 
@@ -62,9 +62,10 @@ public:
   bool collision(const Object &object) const;
   bool isVisible();
 
+  void setSpeed();
   void rotatePoints();
   void translatePoints();
-  void move(float timeDelta);
+  virtual void move(float timeDelta);
   void translationMovement(float timeDelta);
   void rotationalMovement(float timeDelta);
   void wrapAround();
@@ -96,7 +97,7 @@ private:
   float rotationForce{0};
   float rotationFrictionFactor{0};
 
-  std::vector<SDL_FPoint> points;
+  std::vector<SDL_FPoint> rawPoints;
   std::vector<SDL_FPoint> rotatedPts;
   std::vector<SDL_FPoint> translatedPts;
 };
