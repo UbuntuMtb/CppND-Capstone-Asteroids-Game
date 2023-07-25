@@ -13,7 +13,7 @@ public:
   Asteroid(Point position, float directionAngle, float speed, float rotationSpeed,
            std::mt19937 engine);
   void setGeneration(int newGeneration) { generation = newGeneration; }
-  [[nodiscard]] int getGeneration() const { return generation; }
+  int getGeneration() const { return generation; }
 
   std::string toString() override;
   void resize(float factor);

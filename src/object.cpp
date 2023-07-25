@@ -3,6 +3,7 @@
 //
 #include "object.h"
 #include <stdexcept>
+#include <cmath>
 
 float Object::screenWidth = 0;
 float Object::screenHeight = 0;
@@ -333,7 +334,7 @@ std::string Object::toString() {
 
 float Object::wrapAngle(float angle) {
   if (angle >= 360 || angle <= -360)
-    return std::fmod(angle, (float) 360);
+    return fmod(angle, (float) 360);
   else
     return angle;
 }
