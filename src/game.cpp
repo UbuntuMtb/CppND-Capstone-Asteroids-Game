@@ -89,14 +89,13 @@ void Game::Update(float secs_per_frame, bool &fire)
         {
           if (pBullet->collision(*pAsteroid)) {
             pBullet->setDestroyed(true);
-
+            switch (pAsteroid->getGeneration()){
+              case 1: score += 20; break;
+              case 2: score += 50; break;
+              case 3: score += 100; break;
+            }
             if (pAsteroid->getGeneration() == 3) {
               pAsteroid->setDestroyed(true);
-              switch (pAsteroid->getGeneration()){
-                case 1: score += 20; break;
-                case 2: score += 50; break;
-                case 3: score += 100; break;
-              }
             }
             else {
               pAsteroid->setGeneration(pAsteroid->getGeneration() + 1);
