@@ -15,6 +15,7 @@ Option 1 was selected for the project, that is, developing a clone of the classi
 * SDL2 >= 2.0
   * All installation instructions can be found [here](https://wiki.libsdl.org/Installation)
   >Note that for Linux, an `apt` or `apt-get` installation is preferred to building from source. 
+  >For Debian based systems like Ubuntu use "sudo apt-get install libsdl2-2.0-0" or "sudo apt-get install libsdl2-dev"
 * gcc/g++ >= 5.4
   * Linux: gcc / g++ is installed by default on most Linux distros
   * Mac: same deal as make - [install Xcode command line tools](https://developer.apple.com/xcode/features/)

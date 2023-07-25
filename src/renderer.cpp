@@ -70,8 +70,8 @@ void Renderer::Render(std::vector<std::unique_ptr<Object>> &objects) {
     auto &points = pObject->getTranslatedPoints();
 
     for (int i = 0; i < points.size(); i++) {
-      const SDL_FPoint &pt0 = points[i];
-      const SDL_FPoint &pt1 = points[(i + 1) % points.size()];
+      const Point &pt0 = points[i];
+      const Point &pt1 = points[(i + 1) % points.size()];
       SDL_RenderDrawLine(sdl_renderer, (int) pt0.x, (int) pt0.y, (int) pt1.x, (int) pt1.y);
     }
   }

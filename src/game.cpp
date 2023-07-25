@@ -17,7 +17,7 @@ Game::Game(std::size_t screen_width, std::size_t screen_height, float maxSpeed, 
  {
   CreateAsteroids(asteroidCount);
   centerPoint = {(float) screen_width / 2, (float) screen_height / 2};
-  pShip = new Ship(centerPoint, -90.0, 0, 0, 1, 0.5, 4);
+  pShip = new Ship(centerPoint, -90.0, 0, 0, 1, 0.5, 4.0);
   objects.emplace_back(pShip);
 }
 
@@ -186,7 +186,7 @@ void Game::Update(float secs_per_frame, bool &fire)
 
 void Game::CreateAsteroids(int count) {
   for (int i = 0; i < count; i++) {
-    SDL_FPoint position = {(float) randX(engine), (float) randY(engine)};
+    Point position = {(float) randX(engine), (float) randY(engine)};
     auto pAsteroid = new Asteroid(position, (float) randDirection(engine), (float) randSpeed(engine),
                                   (float) randRotationSpeed(engine), engine);
     objects.emplace_back(pAsteroid);

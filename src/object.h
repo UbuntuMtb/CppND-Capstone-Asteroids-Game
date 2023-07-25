@@ -11,31 +11,37 @@
 #include "SDL.h"
 #include "fastSineCosine.h"
 
+typedef struct Point
+{
+  float x;
+  float y;
+} Point;
+
 class Line {
 public:
   enum PointsOrientation { poCollinear = 0, poCCW, poCW};
 
-  Line(const SDL_FPoint& p0, const SDL_FPoint& p1);
-  SDL_FPoint P0() const { return p0; }
-  SDL_FPoint P1() const { return p1; }
-  PointsOrientation orientation(const SDL_FPoint& r) const;
-  bool onSegment(const SDL_FPoint& r) const;
+  Line(const Point& p0, const Point& p1);
+  Point P0() const { return p0; }
+  Point P1() const { return p1; }
+  PointsOrientation orientation(const Point& r) const;
+  bool onSegment(const Point& r) const;
   bool intersect(const Line& line) const;
 
 private:
-  SDL_FPoint p0;
-  SDL_FPoint p1;
+  Point p0;
+  Point p1;
 };
 
 class Object {
 public:
-  Object(SDL_FPoint position, float rotationAngle, float directionAngle, float speed, float rotationSpeed,
+  Object(Point position, float rotationAngle, float directionAngle, float speed, float rotationSpeed,
          float mass = 1, float frictionFactor = 1, float rotationFrictionFactor = 2, bool checkDistanceTraveled = false);
 
   static void setScreenDimensions(float width, float height);
-  void addPoints(std::vector<SDL_FPoint> &pts);
+  void addPoints(std::vector<Point> &pts);
 
-  void setPosition(SDL_FPoint newPosition) { position = newPosition; }
+  void setPosition(Point newPosition) { position = newPosition; }
   void setRotationAngle(float newRotationAngle);
   void setDirectionAngle(float directionAngle);
   void setSpeed(float newSpeed);
@@ -44,7 +50,7 @@ public:
   void setAccelerationForce(float newAccelerationForce) { accelerationForce = newAccelerationForce; }
   void setRotationForce(float newRotationForce) { rotationForce = newRotationForce; }
 
-  SDL_FPoint getPosition() const { return position; }
+  Point getPosition() const { return position; }
   float getRotationAngle() const { return rotationAngle; }
   float getDirectionAngle() const { return directionAngle; }
   float getSpeed() const { return speed; }
@@ -52,11 +58,11 @@ public:
   float getDistanceTraveled() const { return distanceTraveled; }
   bool getDestroyed() const { return destroyed; }
 
-  std::vector<SDL_FPoint > &getRawPoints() {return rawPoints; }
-  const std::vector<SDL_FPoint> &getRotatedPoints() const { return rotatedPts; }
-  const std::vector<SDL_FPoint> &getTranslatedPoints() const { return translatedPts; }
+  std::vector<Point> &getRawPoints() {return rawPoints; }
+  const std::vector<Point> &getRotatedPoints() const { return rotatedPts; }
+  const std::vector<Point> &getTranslatedPoints() const { return translatedPts; }
 
-  bool isInside(SDL_FPoint point) const;
+  bool isInside(Point point) const;
   bool isInside(const Object &object) const;
   bool collision(const Object &object) const;
   bool isVisible();
@@ -79,7 +85,7 @@ private:
   static float screenWidth;
   static float screenHeight;
 
-  SDL_FPoint position;
+  Point position;
   float rotationAngle{0};
   float directionAngle{0};
   float mass{0};
@@ -96,9 +102,9 @@ private:
   float rotationForce{0};
   float rotationFrictionFactor{0};
 
-  std::vector<SDL_FPoint> rawPoints;
-  std::vector<SDL_FPoint> rotatedPts;
-  std::vector<SDL_FPoint> translatedPts;
+  std::vector<Point> rawPoints;
+  std::vector<Point> rotatedPts;
+  std::vector<Point> translatedPts;
 };
 
 #endif //OBJECT_H

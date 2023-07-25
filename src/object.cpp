@@ -9,18 +9,18 @@ float Object::screenHeight = 0;
 Sine Object::sine;
 Cosine Object::cosine;
 
-bool operator==(const SDL_FPoint& p0, const SDL_FPoint& p1)
+bool operator==(const Point& p0, const Point& p1)
 {
   return p0.x == p1.x && p0.y == p1.y;
 }
 
-Line::Line(const SDL_FPoint& p0, const SDL_FPoint& p1) : p0(p0), p1(p1)
+Line::Line(const Point& p0, const Point& p1) : p0(p0), p1(p1)
 {
   if (p1 == p0)
     throw std::invalid_argument("Line: Points are equal!");
 }
 
-bool Line::onSegment(const SDL_FPoint& r) const
+bool Line::onSegment(const Point& r) const
 {
   float maxX = std::max(p0.x, p1.x);
   float minX = std::min(p0.x, p1.x);
@@ -30,7 +30,7 @@ bool Line::onSegment(const SDL_FPoint& r) const
   return minX <= r.x && r.x <= maxX && minY <= r.y && r.y <= maxY;
 }
 
-Line::PointsOrientation Line::orientation(const SDL_FPoint& r) const
+Line::PointsOrientation Line::orientation(const Point& r) const
 {
   float value = (r.y - p1.y) * (p1.x - p0.x) - (p1.y - p0.y) * (r.x - p1.x);
   if (value == 0.0)
@@ -69,7 +69,7 @@ bool Line::intersect(const Line& line) const
   return false;
 }
 
-Object::Object(SDL_FPoint position, float rotationAngle, float directionAngle,
+Object::Object(Point position, float rotationAngle, float directionAngle,
                float speed, float rotationSpeed,
                float mass, float frictionFactor, float rotationFrictionFactor,
                bool checkDistanceTraveled)
@@ -94,7 +94,7 @@ void Object::setScreenDimensions(float width, float height)
   screenHeight = height;
 }
 
-void Object::addPoints(std::vector<SDL_FPoint> &pts)
+void Object::addPoints(std::vector<Point> &pts)
 {
   rawPoints = pts;
   rotatedPts.resize(rawPoints.size());
@@ -151,7 +151,7 @@ void Object::setSpeed()
 //
 // Based on https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
 //
-bool Object::isInside(SDL_FPoint point) const
+bool Object::isInside(Point point) const
 {
   if (translatedPts.size() < 3)
     return false;
@@ -192,7 +192,7 @@ bool Object::collision(const Object &object) const
 }
 
 bool Object::isVisible() {
-  for (const SDL_FPoint &point: translatedPts) {
+  for (const Point &point: translatedPts) {
     if (0 <= point.x && point.x < screenWidth && 0 < point.y && point.y < screenHeight)
       return true;
   }
@@ -205,7 +205,7 @@ void Object::rotatePoints()
   float sinA = sine(rotationAngle);
 
   for (int i = 0; i < rawPoints.size(); i++) {
-    SDL_FPoint &pt = rawPoints[i];
+    Point &pt = rawPoints[i];
     rotatedPts[i] = {pt.x * cosA - pt.y * sinA, pt.x * sinA + pt.y * cosA};
   }
 }
@@ -213,8 +213,8 @@ void Object::rotatePoints()
 void Object::translatePoints()
 {
   for (int i = 0; i < rotatedPts.size(); i++) {
-    SDL_FPoint &point = rotatedPts[i];
-    translatedPts[i] = SDL_FPoint{point.x + position.x, point.y + position.y};
+    Point &point = rotatedPts[i];
+    translatedPts[i] = Point{point.x + position.x, point.y + position.y};
   }
 }
 
@@ -281,7 +281,7 @@ void Object::wrapAround() {
   bool wrapPosY = true;
   bool wrapNegY = true;
 
-  for (SDL_FPoint &point: translatedPts) {
+  for (Point &point: translatedPts) {
     if (point.x >= 0)
       wrapNegX = false;
     if (point.x < screenWidth)
@@ -294,14 +294,14 @@ void Object::wrapAround() {
 
   if (wrapPosX) {
     float xMax = 0;
-    for (SDL_FPoint &point: rotatedPts)
+    for (Point &point: rotatedPts)
       if (point.x > xMax)
         xMax = point.x;
     position.x = -xMax;
   }
   else if (wrapNegX) {
     float xMin = 0;
-    for (SDL_FPoint &point: rotatedPts)
+    for (Point &point: rotatedPts)
       if (point.x < xMin)
         xMin = point.x;
     position.x = screenWidth - xMin;
@@ -309,14 +309,14 @@ void Object::wrapAround() {
 
   if (wrapPosY) {
     float yMax = 0;
-    for (SDL_FPoint &point: rotatedPts)
+    for (Point &point: rotatedPts)
       if (point.y > yMax)
         yMax = point.y;
     position.y = -yMax;
   }
   else if (wrapNegY) {
     float yMin = 0;
-    for (SDL_FPoint &point: rotatedPts)
+    for (Point &point: rotatedPts)
       if (point.y < yMin)
         yMin = point.y;
     position.y = screenHeight - yMin;

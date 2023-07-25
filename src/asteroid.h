@@ -10,7 +10,7 @@
 
 class Asteroid: public Object {
 public:
-  Asteroid(SDL_FPoint position, float directionAngle, float speed, float rotationSpeed,
+  Asteroid(Point position, float directionAngle, float speed, float rotationSpeed,
            std::mt19937 engine);
   void setGeneration(int newGeneration) { generation = newGeneration; }
   [[nodiscard]] int getGeneration() const { return generation; }
@@ -23,7 +23,7 @@ private:
 
 class Ship: public Object {
 public:
-  Ship(SDL_FPoint position, float directionAngle, float speed, float rotationSpeed,
+  Ship(Point position, float directionAngle, float speed, float rotationSpeed,
        float mass, float frictionFactor, float rotationFrictionFactor);
   Ship() : Ship({0, 0}, 0, 0, 0, 1, 1, 1) {}
 
@@ -38,13 +38,13 @@ private:
 
 class Bullet: public Object {
 public:
-  Bullet(SDL_FPoint position, float directionAngle, float speed);
+  Bullet(Point position, float directionAngle, float speed);
   std::string toString() override;
 };
 
 class Dust: public Object {
 public:
-  Dust(SDL_FPoint position, float directionAngle, float speed);
+  Dust(Point position, float directionAngle, float speed);
   std::string toString() override;
 };
 

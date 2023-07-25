@@ -9,17 +9,17 @@
 // Asteroid Object
 //////////////////////////////////////
 
-Asteroid::Asteroid(SDL_FPoint position, float directionAngle,
+Asteroid::Asteroid(Point position, float directionAngle,
                    float speed, float rotationSpeed,
                    std::mt19937 engine)
   : Object(position, 0, directionAngle, speed, rotationSpeed, 1, 0, 0, false)
 {
-  std::vector<SDL_FPoint> points;
+  std::vector<Point> points;
   std::uniform_int_distribution<int> randR(15, 50);
 
   for (int angle = 0; angle < 360; angle += 360 / 10) {
     auto radius = (float) randR(engine);
-    SDL_FPoint point = {radius * cosine((float) angle), radius * sine((float) angle)};
+    Point point = {radius * cosine((float) angle), radius * sine((float) angle)};
     points.emplace_back(point);
   }
   addPoints(points);
@@ -40,12 +40,12 @@ void Asteroid::resize(float factor)
 // Ship Object
 //////////////////////////////////////
 
-Ship::Ship(SDL_FPoint position, float directionAngle,
+Ship::Ship(Point position, float directionAngle,
            float speed, float rotationSpeed,
            float mass, float frictionFactor, float rotationFrictionFactor)
   : Object(position, directionAngle, directionAngle, speed, rotationSpeed, mass, frictionFactor, rotationFrictionFactor)
 {
-  std::vector<SDL_FPoint> points = {{15, 0}, {-15, 10}, {-15, -10}};
+  std::vector<Point> points = {{15, 0}, {-15, 10}, {-15, -10}};
   addPoints(points);
   setGhost(true);
 }
@@ -72,9 +72,9 @@ std::string Ship::toString()
   return "Ship, " + Object::toString();
 }
 
-Bullet::Bullet(SDL_FPoint position, float directionAngle, float speed)
+Bullet::Bullet(Point position, float directionAngle, float speed)
   : Object (position, 0, directionAngle, speed, 0, 1, 0, 0, true) {
-  std::vector<SDL_FPoint> points = {{2, 2}, {-2, 2}, {-2, -2}, {2, -2}};
+  std::vector<Point> points = {{2, 2}, {-2, 2}, {-2, -2}, {2, -2}};
   addPoints(points);
 }
 
@@ -86,10 +86,10 @@ std::string Bullet::toString()
 //////////////////////////////////////
 // Dust Object
 //////////////////////////////////////
-Dust::Dust(SDL_FPoint position, float directionAngle, float speed)
+Dust::Dust(Point position, float directionAngle, float speed)
   : Object(position, 0, directionAngle, speed, 0, 1, 0, 0, true)
 {
-  std::vector<SDL_FPoint> points = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+  std::vector<Point> points = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
   addPoints(points);
 }
 
